@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>Tutorial 05 — Plan and implement complex features | IBM Bob IDE Lab</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&family=IBM+Plex+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+<link rel="stylesheet" href="../assets/tutorial.css"/>
+<style>
+.principle-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:.75rem;margin:.75rem 0}
+.principle-card{background:var(--bg-alt);border:1px solid var(--border);border-radius:4px;padding:.9rem 1rem}
+.principle-card__q{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--primary);margin-bottom:.25rem;font-family:'IBM Plex Mono',monospace}
+.principle-card p{font-size:12px;color:var(--text-secondary);line-height:1.55}
+</style>
+</head>
+<body>
+<header class="topbar">
+  <div class="topbar__brand">
+    <button class="menu-toggle" onclick="document.getElementById('sidebar').classList.toggle('open')" aria-label="Menu">&#9776;</button>
+    <div class="logo-dot"></div>
+    <div>
+      <div class="brand-kicker">IBM BOB</div>
+      <div class="brand-title">IDE Tutorial Lab Guide</div>
+    </div>
+  </div>
+  <div class="topbar__meta">
+    <a href="https://bob.ibm.com/docs/ide/tutorials/create-a-plan-and-implement-complex-features" class="topbar__link" target="_blank" rel="noopener">Official Docs ↗</a>
+  </div>
+</header>
+
+<div class="layout">
+  <nav class="sidebar" id="sidebar">
+    <a href="../index.html" class="sidebar__back">← Back to Lab Home</a>
+    <div class="sidebar__title">On This Page</div>
+    <div class="sidebar__nav">
+      <a href="#overview" class="sidebar__link active"><span class="sidebar__num">—</span> Why Plan mode?</a>
+      <a href="#prereqs" class="sidebar__link"><span class="sidebar__num">—</span> Prerequisites</a>
+      <a href="#setup" class="sidebar__link"><span class="sidebar__num">01</span> Set up environment</a>
+      <a href="#writing-prompts" class="sidebar__link"><span class="sidebar__num">02</span> How to write a plan prompt</a>
+      <a href="#generate-plan" class="sidebar__link"><span class="sidebar__num">03</span> Generate the plan</a>
+      <a href="#review-plan" class="sidebar__link"><span class="sidebar__num">04</span> Review the plan</a>
+      <a href="#iterate" class="sidebar__link"><span class="sidebar__num">05</span> Iterate on the plan</a>
+      <a href="#implement" class="sidebar__link"><span class="sidebar__num">06</span> Implement the feature</a>
+    </div>
+  </nav>
+
+  <main class="content">
+    <div class="page-header">
+      <div class="page-kicker">Tutorial 05 · Feature Development</div>
+      <h1>Plan and implement complex features</h1>
+      <p class="page-lead">Use IBM Bob's Plan mode to scope, review, and implement complex features with an AI coding agent. Walk through writing a planning prompt, refining the generated plan, and running implementation in Agent mode.</p>
+    </div>
+
+    <div class="step" id="overview">
+      <div class="step-num">Overview</div>
+      <h2>Why use Plan mode?</h2>
+      <p>Bob is an autonomous agent. When you use a vague prompt, Bob fills any gaps with its own assumptions — which may not match your intent, even if they are technically accurate.</p>
+      <p>When you create a plan, Bob generates a set of Markdown files that describe the scope, architecture decisions, and ordered implementation steps. Because the plan is <em>separate</em> from the implementation, you can read it, question it, and refine it before Bob writes any code.</p>
+      <div class="callout callout--info">
+        <div class="callout__label">The scenario</div>
+        <p>In this tutorial, you use Plan mode to create a structured implementation plan for adding <strong>seat classes</strong> to the Galaxium Travels demo application — Economy, Business, and Galaxium class — across the front-end, back-end, and database layers. You then approve the plan and let Bob implement the feature.</p>
+      </div>
+    </div>
+
+    <div class="step" id="prereqs">
+      <div class="step-num">Prerequisites</div>
+      <h2>What you need</h2>
+      <ul>
+        <li><strong>IBM Bob IDE</strong></li>
+        <li><strong>Git</strong> to clone the example repository.</li>
+      </ul>
+    </div>
+
+    <div class="step" id="setup">
+      <div class="step-num">Step 01</div>
+      <h2>Set up your environment</h2>
+      <div class="code-block">
+        <div class="code-block__header"><span class="code-block__lang">bash</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+        <div class="code-body">git clone -b bob-learning-path-branch https://github.com/IBM/galaxium-travels</div>
+      </div>
+      <ol>
+        <li>In Bob, click <strong>File → Open Folder</strong> and open the <code>galaxium-travels</code> directory.</li>
+        <li>Run <code>/init</code> in the Bob chat panel to have Bob create AGENTS.md files.</li>
+      </ol>
+      <div class="code-block">
+        <div class="code-block__header"><span class="code-block__lang">bob chat</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+        <div class="code-body">/init</div>
+      </div>
+      <p>Click <strong>Approve todo tools for task</strong> to create the files. The root AGENTS.md file tells Bob the project's overall structure, conventions, and goals so Bob can write code that fits your project.</p>
+      <div class="callout callout--info">
+        <div class="callout__label">Why /init matters for planning</div>
+        <p>Without AGENTS.md, Bob starts from scratch every conversation because Bob is stateless. The rule files in <code>.bob</code> are where Bob creates AGENTS.md for each of its modes: Agent, Plan, and Ask. Each mode has a different set of rules that guide Bob's behavior in that mode.</p>
+      </div>
+    </div>
+
+    <div class="step" id="writing-prompts">
+      <div class="step-num">Step 02</div>
+      <h2>How to write a Plan prompt</h2>
+      <p>The prompt you write in Plan mode becomes the specification Bob works from. A vague prompt produces a vague plan. Before you type, answer these four questions:</p>
+      <div class="principle-grid">
+        <div class="principle-card">
+          <div class="principle-card__q">What does it do?</div>
+          <p>What does the feature do, and what does it <em>not</em> do? Explicit scope prevents Bob from adding work you did not ask for.</p>
+        </div>
+        <div class="principle-card">
+          <div class="principle-card__q">Which layers?</div>
+          <p>Which layers does the feature touch? For example: UI, API, database. Name them explicitly.</p>
+        </div>
+        <div class="principle-card">
+          <div class="principle-card__q">What constraints?</div>
+          <p>File count limits, naming conventions, backward compatibility requirements — anything Bob should treat as non-negotiable.</p>
+        </div>
+        <div class="principle-card">
+          <div class="principle-card__q">What is "done"?</div>
+          <p>A concrete acceptance criterion, e.g. "a user can select Economy, Business, or Galaxium class during booking."</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="step" id="generate-plan">
+      <div class="step-num">Step 03</div>
+      <h2>Generate the plan</h2>
+      <h3>Switch to Plan mode</h3>
+      <p>Open the agentic chat sidebar. Select <strong>Plan</strong> from the mode selector in the chat interface.</p>
+
+      <h3>Create the plan</h3>
+      <p>Run the following prompt. Notice how it applies the four scoping principles: it names the layers to change, sets a file count limit, excludes the admin dashboard, and states an acceptance criterion.</p>
+      <div class="code-block">
+        <div class="code-block__header"><span class="code-block__lang">bob prompt — Plan mode</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+        <div class="code-body">I want to add seat classes to Galaxium Travels. Passengers should be able to choose Economy, Business, or Galaxium class when booking a flight.
+
+Scope:
+- Update the booking UI to show a seat class selector
+- Update the back-end booking API to accept and store the selected class
+- Update the database schema to add a seat_class column to the bookings table
+- Do not add admin dashboard changes — that is out of scope
+
+Constraints:
+- Create a folder called `plans` in the galaxium-travels folder
+- Do not create more than three plan files
+- Keep the database change backward compatible
+
+Done when: A user can select a seat class during booking and the selected class is saved and displayed in their booking confirmation.</div>
+      </div>
+      <p>Bob may ask clarifying questions about your intent. Answer them, or tell Bob to select the best options. Click <strong>Approve skill tools for task</strong> and <strong>Approve subagent tools for task</strong> when prompted.</p>
+      <p>When Bob finishes, it requests approval to write the plan files. Click <strong>Approve edit tools for task</strong>. Bob places the plan files in the <code>plans/</code> folder as Markdown files.</p>
+    </div>
+
+    <div class="step" id="review-plan">
+      <div class="step-num">Step 04</div>
+      <h2>Review the plan</h2>
+      <p>The plan files are the specification Bob builds from. Open the files in <code>plans/</code> and review them carefully.</p>
+      <p>When reviewing plans, look for:</p>
+      <ul class="checklist">
+        <li><strong>Scope match:</strong> Does the plan include everything you asked for? Does it include anything you did <em>not</em> ask for?</li>
+        <li><strong>Vague language:</strong> Look for phrases like "add as needed" or "update appropriately." These are unstated assumptions. Replace them with specific instructions before approving.</li>
+        <li><strong>Named files:</strong> Each step should identify the files it touches. If a step says "update the booking component" without naming the file, ask Bob to be more specific.</li>
+      </ul>
+    </div>
+
+    <div class="step" id="iterate">
+      <div class="step-num">Step 05</div>
+      <h2>Iterate on the plan</h2>
+      <p>If the plan does not match your intent, ask Bob to revise it <em>in the same Plan mode conversation</em>. You do not need to start over.</p>
+      <p>For example, if the plan Bob generated was not specific about the color or badge for each seat class:</p>
+      <div class="code-block">
+        <div class="code-block__header"><span class="code-block__lang">bob prompt — Plan mode (same conversation)</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+        <div class="code-body">Please update the plan to specify the following colors for each class:
+- Economy: green
+- Business: gold
+- Galaxium: cosmic-gradient</div>
+      </div>
+      <p>Review the plan again after revisions. Repeat until you are satisfied that the plan matches your intent exactly.</p>
+      <div class="callout callout--warning">
+        <div class="callout__label">Do not skip this step</div>
+        <p>The plan is your opportunity to catch issues before Bob writes any code. A 5-minute review now can save 30 minutes of undoing changes later.</p>
+      </div>
+    </div>
+
+    <div class="step" id="implement">
+      <div class="step-num">Step 06</div>
+      <h2>Implement the new features</h2>
+      <h3>Start a new conversation</h3>
+      <p>Click the <strong>+</strong> at the top of the chat interface to start a new conversation and clear the context window. Starting a new conversation:</p>
+      <ul class="checklist">
+        <li>Prevents earlier planning discussion from consuming your token budget.</li>
+        <li>Keeps the implementation context focused on the approved plan.</li>
+        <li>Reduces the risk of Bob conflating planning and implementation instructions.</li>
+      </ul>
+
+      <h3>Switch to Agent mode</h3>
+      <p>Select <strong>Agent</strong> from the mode selector to switch to Agent mode.</p>
+
+      <h3>Build the feature</h3>
+      <p>Submit this prompt to implement the features. The <code>@plans/</code> reference includes all plans in the folder, so you do not need to name the files individually.</p>
+      <div class="code-block">
+        <div class="code-block__header"><span class="code-block__lang">bob prompt — Agent mode</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+        <div class="code-body">Build the features in the plans folder @plans/</div>
+      </div>
+      <p>Bob prompts you to <strong>Approve todo tools for task</strong> and <strong>Approve edit tools for task</strong>. Approve both requests.</p>
+      <div class="callout callout--success">
+        <div class="callout__label">Result</div>
+        <p>You have added seat class support across the booking UI, back-end API, and database — with Economy, Business, and Galaxium class options reflected throughout the system, using the colors specified in your revised plan.</p>
+      </div>
+    </div>
+
+    <div class="nav-footer">
+      <a href="04-audit-code.html" class="nav-btn">
+        <span class="nav-btn__dir">← Previous</span>
+        <span class="nav-btn__title">Audit code and generate reports</span>
+      </a>
+      <a href="06-modernize-nodejs.html" class="nav-btn nav-btn--next">
+        <span class="nav-btn__dir">Next →</span>
+        <span class="nav-btn__title">Modernize a Node.js application</span>
+      </a>
+    </div>
+  </main>
+</div>
+
+<footer>
+  IBM Bob IDE Tutorial Lab Guide &nbsp;·&nbsp; Tutorial 05 of 06
+  <br><span style="color:#c6c6c6;font-size:11px">Made with IBM Bob</span>
+</footer>
+
+<script>
+function copyCode(btn){
+  const code = btn.closest('.code-block').querySelector('.code-body').textContent;
+  navigator.clipboard.writeText(code.trim()).then(() => {
+    btn.textContent = 'Copied!'; btn.classList.add('copied');
+    setTimeout(() => { btn.textContent = 'Copy'; btn.classList.remove('copied'); }, 2000);
+  });
+}
+const links = document.querySelectorAll('.sidebar__link');
+const steps = document.querySelectorAll('.step[id]');
+window.addEventListener('scroll', () => {
+  const y = window.scrollY + 70;
+  let cur = steps[0];
+  steps.forEach(s => { if(s.offsetTop <= y) cur = s; });
+  links.forEach(l => { l.classList.remove('active'); if(l.getAttribute('href') === '#' + (cur && cur.id)) l.classList.add('active'); });
+});
+</script>
+</body>
+</html>

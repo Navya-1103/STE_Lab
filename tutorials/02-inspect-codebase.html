@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>Tutorial 02 — Inspect an unfamiliar codebase | IBM Bob IDE Lab</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&family=IBM+Plex+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+<link rel="stylesheet" href="../assets/tutorial.css"/>
+</head>
+<body>
+<header class="topbar">
+  <div class="topbar__brand">
+    <button class="menu-toggle" onclick="document.getElementById('sidebar').classList.toggle('open')" aria-label="Menu">&#9776;</button>
+    <div class="logo-dot"></div>
+    <div>
+      <div class="brand-kicker">IBM BOB</div>
+      <div class="brand-title">IDE Tutorial Lab Guide</div>
+    </div>
+  </div>
+  <div class="topbar__meta">
+    <a href="https://bob.ibm.com/docs/ide/tutorials/inspect-a-codebase" class="topbar__link" target="_blank" rel="noopener">Official Docs ↗</a>
+  </div>
+</header>
+
+<div class="layout">
+  <nav class="sidebar" id="sidebar">
+    <a href="../index.html" class="sidebar__back">← Back to Lab Home</a>
+    <div class="sidebar__title">On This Page</div>
+    <div class="sidebar__nav">
+      <a href="#overview" class="sidebar__link active"><span class="sidebar__num">—</span> Overview</a>
+      <a href="#prereqs" class="sidebar__link"><span class="sidebar__num">—</span> Prerequisites</a>
+      <a href="#setup" class="sidebar__link"><span class="sidebar__num">01</span> Set up workspace</a>
+      <a href="#ask-mode" class="sidebar__link"><span class="sidebar__num">02</span> Switch to Ask mode</a>
+      <a href="#purpose" class="sidebar__link"><span class="sidebar__num">03</span> App purpose &amp; structure</a>
+      <a href="#tech-stack" class="sidebar__link"><span class="sidebar__num">04</span> Analyze tech stack</a>
+      <a href="#components" class="sidebar__link"><span class="sidebar__num">05</span> Map key components</a>
+      <a href="#unit-tests" class="sidebar__link"><span class="sidebar__num">06</span> Unit test coverage</a>
+      <a href="#e2e-tests" class="sidebar__link"><span class="sidebar__num">07</span> E2E test coverage</a>
+      <a href="#deployment" class="sidebar__link"><span class="sidebar__num">08</span> Deployment model</a>
+      <a href="#save" class="sidebar__link"><span class="sidebar__num">09</span> Save findings</a>
+      <a href="#troubleshooting" class="sidebar__link"><span class="sidebar__num">—</span> Troubleshooting</a>
+    </div>
+  </nav>
+
+  <main class="content">
+    <div class="page-header">
+      <div class="page-kicker">Tutorial 02 · Codebase Exploration</div>
+      <h1>Inspect an unfamiliar codebase</h1>
+      <p class="page-lead">Use IBM Bob to rapidly understand an unfamiliar application — its purpose, project structure, architecture, tech stack, key components, test coverage, and deployment model — without relying on outdated documentation or waiting for teammates.</p>
+    </div>
+
+    <div class="step" id="overview">
+      <div class="step-num">Overview</div>
+      <h2>What you will learn</h2>
+      <p>Getting productive in an unfamiliar codebase typically means hours of reading code, looking for documentation, and asking teammates for context. In this tutorial, you use Bob in <strong>Ask mode</strong> to systematically interrogate the Galaxium Travels codebase and extract a complete picture of the application.</p>
+      <p>You then switch to <strong>Agent mode</strong> to save everything Bob discovered into a persistent Markdown reference that your whole team can use.</p>
+      <p>Galaxium Travels is an intentionally complex, real-world-style application with a React frontend, a Python FastAPI backend, and a Java Spring Boot inventory hold service — making it a strong candidate for this workflow.</p>
+
+      <div class="callout callout--info">
+        <div class="callout__label">Key features you learn</div>
+        <p><strong>Ask mode</strong> — Explore and analyze code without Bob modifying any files.<br/>
+        <strong>Agent mode</strong> — Let Bob write files to persist generated artifacts.<br/>
+        <strong>Context mentions (@)</strong> — Reference specific files/folders to give Bob precise scope.<br/>
+        <strong>/init</strong> — Initialize project context before asking questions.</p>
+      </div>
+    </div>
+
+    <div class="step" id="prereqs">
+      <div class="step-num">Prerequisites</div>
+      <h2>What you need</h2>
+      <ul>
+        <li>Bob IDE installed.</li>
+        <li>Git installed locally.</li>
+        <li>Familiarity with the basics of Bob. If new, complete the <a href="https://bob.ibm.com/docs/ide/getting-started/quickstart" target="_blank" rel="noopener">Quickstart</a> first.</li>
+      </ul>
+      <div class="callout callout--warning">
+        <div class="callout__label">Note — different branch</div>
+        <p>This tutorial uses the <strong>default branch</strong> of Galaxium Travels (not <code>bob-learning-path-branch</code>). The default branch contains the full multi-service architecture needed for the exploration prompts.</p>
+      </div>
+    </div>
+
+    <div class="step" id="setup">
+      <div class="step-num">Step 01</div>
+      <h2>Set up your workspace</h2>
+      <h3>Clone the repository</h3>
+      <div class="code-block">
+        <div class="code-block__header"><span class="code-block__lang">bash</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+        <div class="code-body">git clone https://github.com/IBM/galaxium-travels.git</div>
+      </div>
+      <h3>Open the project in Bob IDE</h3>
+      <ol>
+        <li>Launch IBM Bob IDE.</li>
+        <li>Click <strong>File → Open Folder</strong> and open the <code>galaxium-travels</code> directory.</li>
+        <li>If Bob asks <em>"Do you trust the authors?"</em>, click <strong>Yes, I trust the authors</strong>.</li>
+        <li>Open the Bob chat interface: click the Bob icon or press <code>⌥⌘B</code> (Mac) / <code>Ctrl+Alt+B</code> (Windows).</li>
+      </ol>
+      <h3>Initialize project context</h3>
+      <p>Bob defaults to Agent mode on startup. Before switching modes, run <code>/init</code> so Bob reads the project and generates the AGENTS.md context files it uses in subsequent interactions.</p>
+      <div class="code-block">
+        <div class="code-block__header"><span class="code-block__lang">bob chat</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+        <div class="code-body">/init</div>
+      </div>
+      <p>If auto-approval is disabled, Bob asks permission to read files and write the AGENTS.md files. Approve each request. Bob creates a root-level <code>AGENTS.md</code> and a <code>.bob/</code> folder with mode-specific configuration.</p>
+      <p>Review the generated AGENTS.md to confirm that Bob correctly identified the multi-service structure of the repository.</p>
+    </div>
+
+    <div class="step" id="ask-mode">
+      <div class="step-num">Step 02</div>
+      <h2>Switch to Ask mode</h2>
+      <p>Select <strong>Ask</strong> in the mode selector below the chat input field, or type <code>/ask</code> to switch modes.</p>
+      <div class="callout callout--info">
+        <div class="callout__label">Ask mode is read-only</div>
+        <p>Ask mode is strictly read-only. Bob analyzes files but cannot create or modify anything, making it the right mode for all the exploration work in this tutorial.</p>
+      </div>
+    </div>
+
+    <div class="step" id="purpose">
+      <div class="step-num">Step 03</div>
+      <h2>Understand the application purpose and project structure</h2>
+      <p>Start with the broadest question: what does this application do, and how is the codebase organized? Bob reads the project structure and key files (README.md, package.json, requirements.txt, build files) and synthesizes a concise summary.</p>
+      <div class="code-block">
+        <div class="code-block__header"><span class="code-block__lang">bob prompt — Ask mode</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+        <div class="code-body">What is the purpose of this application? Describe the project structure, the high-level architecture, and the main responsibilities of each top-level directory.</div>
+      </div>
+      <p>Bob reads the file tree and key entry points, then produces output that includes:</p>
+      <ul class="checklist">
+        <li>Application purpose</li>
+        <li>Top-level directory responsibilities</li>
+        <li>A synopsis of each top-level directory's contents</li>
+        <li>High-level architecture diagram</li>
+      </ul>
+    </div>
+
+    <div class="step" id="tech-stack">
+      <div class="step-num">Step 04</div>
+      <h2>Analyze the tech stack</h2>
+      <p>With the high-level structure clear, drill into the exact technologies in use. This is useful when you need to understand build tooling, evaluate dependency choices, or assess upgrade scope.</p>
+      <div class="code-block">
+        <div class="code-block__header"><span class="code-block__lang">bob prompt — Ask mode</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+        <div class="code-body">Analyze the tech stack for the entire application. For each service, list the programming language, runtime version requirements, framework, key libraries, database, and build/test tooling.</div>
+      </div>
+      <p>Bob inspects the dependency and configuration files for each service and produces:</p>
+      <ul class="checklist">
+        <li>Detailed tech stack analysis for each service</li>
+        <li>End-to-end testing framework identification</li>
+        <li>Additional tooling from the CI/CD stack and deployment scripts</li>
+        <li>A "Stack at a Glance" diagram that visually summarizes the tech stack across all services and layers</li>
+      </ul>
+    </div>
+
+    <div class="step" id="components">
+      <div class="step-num">Step 05</div>
+      <h2>Map the key components</h2>
+      <p>Understanding the tech stack tells you <em>what</em> a codebase uses; understanding the key components tells you <em>how</em> it works. Use context mentions (<code>@</code>) to point Bob at the most relevant files and trace component boundaries across all three services.</p>
+      <div class="code-block">
+        <div class="code-block__header"><span class="code-block__lang">bob prompt — Ask mode</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+        <div class="code-body">Identify the key components of this application and explain how they interact. Reference @booking_system_frontend/src/services, @booking_system_backend/server.py, @booking_system_backend/services, @booking_system_backend/models.py, and @booking_system_inventory_hold_service/src/main/java/com/galaxium/holdservice. Describe the component responsibilities, the data flow for the booking lifecycle, and any cross-service contracts I need to know before modifying the codebase.</div>
+      </div>
+      <p>Bob traces the interaction chain and produces:</p>
+      <ul class="checklist">
+        <li>Frontend, backend API, database layer, and Java hold service component responsibilities</li>
+        <li>A diagram breakdown of the two booking lifecycle flows with component interactions annotated</li>
+        <li>A summary of the five cross-service contracts you must know before making changes</li>
+        <li>A component interaction map</li>
+      </ul>
+    </div>
+
+    <div class="step" id="unit-tests">
+      <div class="step-num">Step 06</div>
+      <h2>Assess unit test coverage</h2>
+      <p>Before adding features or refactoring, know what the existing test suite covers and where the gaps are. This prompt asks Bob to read the test files and produce a coverage assessment <em>without</em> running the tests.</p>
+      <div class="code-block">
+        <div class="code-block__header"><span class="code-block__lang">bob prompt — Ask mode</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+        <div class="code-body">Analyze the unit test suites across all three services. Reference @booking_system_backend/tests, @booking_system_inventory_hold_service/src/test, and @booking_system_frontend/src. For each service, describe what is tested, which testing framework is used, what the test structure looks like, and identify any obvious gaps where critical logic appears to be untested.</div>
+      </div>
+      <p>Bob reads the test files and produces a detailed test suite analysis including:</p>
+      <ul class="checklist">
+        <li>Testing framework, classes under test, number of tests per class, and what is verified per class for each service</li>
+        <li>Critical gaps in testing</li>
+        <li>Missing test coverage for critical business logic</li>
+      </ul>
+    </div>
+
+    <div class="step" id="e2e-tests">
+      <div class="step-num">Step 07</div>
+      <h2>Assess integration and end-to-end test coverage</h2>
+      <p>Unit tests tell you whether individual components work in isolation; integration and end-to-end tests tell you whether the services work correctly <em>together</em>. This is particularly important for Galaxium Travels because the booking confirmation flow spans all three services.</p>
+      <div class="code-block">
+        <div class="code-block__header"><span class="code-block__lang">bob prompt — Ask mode</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+        <div class="code-body">Analyze the end-to-end and integration test coverage. Reference @tests_e2e and any cross-service test fixtures you can identify. Describe which cross-service flows are covered, which are not, what test infrastructure is required to run the suite, and what the tests assert at the boundary level.</div>
+      </div>
+      <p>Bob reads the end-to-end test suite and generates detailed analysis including:</p>
+      <ul class="checklist">
+        <li>Test infrastructure and requirements to run the suite</li>
+        <li>Smoke tests and key infrastructure decisions</li>
+        <li>Cross-service flows both covered and not covered</li>
+        <li>Test assertions at the boundary level</li>
+      </ul>
+    </div>
+
+    <div class="step" id="deployment">
+      <div class="step-num">Step 08</div>
+      <h2>Review the deployment model</h2>
+      <p>Understanding how an application is deployed — its target platforms, containerization strategy, and infrastructure automation — is essential before you onboard as a contributor or run the application anywhere beyond your laptop.</p>
+      <div class="code-block">
+        <div class="code-block__header"><span class="code-block__lang">bob prompt — Ask mode</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+        <div class="code-body">Analyze the deployment model for this application. Reference @docker-compose.yml, @deployment_scripts, @terraform, @.github/workflows, and the deployment documentation in @docs. Describe the supported deployment targets, how each service is containerized, what infrastructure is provisioned, and how CI/CD is configured.</div>
+      </div>
+      <p>Bob reads the deployment artifacts and produces a deployment model analysis covering:</p>
+      <ul class="checklist">
+        <li>Supported deployment targets</li>
+        <li>Containerization strategy for each service</li>
+        <li>Infrastructure provisioning details</li>
+        <li>CI/CD workflows</li>
+        <li>Key deployment constraints and gaps</li>
+      </ul>
+    </div>
+
+    <div class="step" id="save">
+      <div class="step-num">Step 09</div>
+      <h2>Save your findings to the repository</h2>
+      <p>The analysis you produced in Ask mode lives only in the chat session. Switch to Agent mode to ask Bob to write a persistent onboarding reference document to the repository, so future contributors can benefit from this work.</p>
+
+      <h3>Switch to Agent mode</h3>
+      <p>Select <strong>Agent</strong> in the mode selector, or type <code>/agent</code> in the chat input field.</p>
+
+      <h3>Create the onboarding reference</h3>
+      <p>Ask Bob to consolidate everything it discovered into a single Markdown file. Bob has the full context of the conversation and synthesizes findings without re-reading all the files.</p>
+      <div class="code-block">
+        <div class="code-block__header"><span class="code-block__lang">bob prompt — Agent mode</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+        <div class="code-body">Create a file called docs/ONBOARDING.md. Create one section for each of these topics:
+1. Application overview: purpose, project structure, high-level architecture, and the main responsibilities of each top-level directory.
+2. Tech stack analysis, including a "Stack at a Glance" diagram.
+3. Key components and their interactions, including a component interaction map.
+4. Unit test coverage analysis.
+5. End-to-end test coverage analysis.
+6. Deployment model analysis.
+Populate each section with everything you discovered in this session. Use clear headings, Mermaid diagrams, and tables where appropriate. Keep the tone concise and technical.</div>
+      </div>
+      <p>Bob writes the file. If auto-approval is disabled, click <strong>Approve</strong> when Bob requests permission to write <code>docs/ONBOARDING.md</code>.</p>
+
+      <h3>Verify the output</h3>
+      <p>Open <code>docs/ONBOARDING.md</code> in the editor to confirm the document contains all the expected content. You can also ask Bob to preview it:</p>
+      <div class="code-block">
+        <div class="code-block__header"><span class="code-block__lang">bob prompt</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+        <div class="code-body">Show me a preview of docs/ONBOARDING.md</div>
+      </div>
+      <p>Bob renders the Markdown in the chat interface. Review the content for accuracy and completeness before committing.</p>
+
+      <div class="callout callout--success">
+        <div class="callout__label">Result</div>
+        <p>You now have a <code>docs/ONBOARDING.md</code> file that captures the complete application understanding — available to every contributor and to Bob itself in future sessions.</p>
+      </div>
+    </div>
+
+    <div class="step" id="troubleshooting">
+      <div class="step-num">Troubleshooting</div>
+      <h2>Common issues</h2>
+
+      <h3>Bob's analysis is shallow or misses services</h3>
+      <p>By default, Bob reads the project structure and a selection of key files. If the output is missing a service, add an explicit context mention. For example, if the Java hold service is missing from the tech stack analysis:</p>
+      <div class="code-block">
+        <div class="code-block__header"><span class="code-block__lang">bob prompt</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+        <div class="code-body">Analyze the tech stack for @booking_system_inventory_hold_service/pom.xml and add the Java hold service to the tech stack summary you produced earlier.</div>
+      </div>
+
+      <h3>Bob cannot find test files</h3>
+      <div class="code-block">
+        <div class="code-block__header"><span class="code-block__lang">bob prompt</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+        <div class="code-body">Analyze the test coverage in @booking_system_backend/tests and @tests_e2e. List every test file and summarize what each one covers.</div>
+      </div>
+
+      <h3>/init generates an empty or incorrect AGENTS.md</h3>
+      <p>Confirm that <code>galaxium-travels/</code> (not a subdirectory) is open as the workspace root. All three service directories must be visible at the top level. If the root lacks a README.md, add one and rerun <code>/init</code>.</p>
+    </div>
+
+    <div class="nav-footer">
+      <a href="01-start-a-project.html" class="nav-btn">
+        <span class="nav-btn__dir">← Previous</span>
+        <span class="nav-btn__title">Start a project with /init</span>
+      </a>
+      <a href="03-architecture-diagrams.html" class="nav-btn nav-btn--next">
+        <span class="nav-btn__dir">Next →</span>
+        <span class="nav-btn__title">Generate architecture diagrams</span>
+      </a>
+    </div>
+  </main>
+</div>
+
+<footer>
+  IBM Bob IDE Tutorial Lab Guide &nbsp;·&nbsp; Tutorial 02 of 06
+  <br><span style="color:#c6c6c6;font-size:11px">Made with IBM Bob</span>
+</footer>
+
+<script>
+function copyCode(btn){
+  const code = btn.closest('.code-block').querySelector('.code-body').textContent;
+  navigator.clipboard.writeText(code.trim()).then(() => {
+    btn.textContent = 'Copied!'; btn.classList.add('copied');
+    setTimeout(() => { btn.textContent = 'Copy'; btn.classList.remove('copied'); }, 2000);
+  });
+}
+const links = document.querySelectorAll('.sidebar__link');
+const steps = document.querySelectorAll('.step[id]');
+window.addEventListener('scroll', () => {
+  const y = window.scrollY + 70;
+  let cur = steps[0];
+  steps.forEach(s => { if(s.offsetTop <= y) cur = s; });
+  links.forEach(l => { l.classList.remove('active'); if(l.getAttribute('href') === '#' + (cur && cur.id)) l.classList.add('active'); });
+});
+</script>
+</body>
+</html>

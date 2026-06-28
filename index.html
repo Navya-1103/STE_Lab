@@ -42,6 +42,7 @@ body{font-family:'IBM Plex Sans',sans-serif;font-size:14px;line-height:1.6;color
 .sidebar__link:hover{background:#e8e8e8;color:var(--text)}
 .sidebar__link.active{color:var(--primary);border-left-color:var(--primary);background:#e8f0fe;font-weight:500}
 .sidebar__num{font-size:11px;font-weight:600;color:var(--text-secondary);font-family:'IBM Plex Mono',monospace;min-width:22px}
+.sidebar__section{font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--text-muted);padding:.75rem 1rem .3rem;margin-top:.25rem}
 
 /* CONTENT */
 .content{margin-left:var(--sidebar-width);flex:1;padding:2rem;max-width:960px}
@@ -89,7 +90,20 @@ body{font-family:'IBM Plex Sans',sans-serif;font-size:14px;line-height:1.6;color
 .arch-table th{text-align:left;font-size:12px;font-weight:600;color:var(--text-secondary);text-transform:uppercase;letter-spacing:.06em;padding:.5rem .75rem;border-bottom:2px solid var(--border)}
 .arch-table td{font-size:13px;padding:.5rem .75rem;border-bottom:1px solid var(--border);color:var(--text-secondary)}
 .arch-table td:first-child{font-weight:500;color:var(--text)}
-.arch-table code{font-family:'IBM Plex Mono',monospace;font-size:12px;background:var(--code-bg);padding:1px 4px;border-radius:3px}
+.arch-table td code,.arch-table td a{font-family:'IBM Plex Mono',monospace;font-size:12px}
+.arch-table td code{background:var(--code-bg);padding:1px 4px;border-radius:3px}
+
+/* PREREQ CARDS */
+.prereq-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:1rem;margin:.75rem 0}
+.prereq-card{background:#fff;border:1px solid var(--border);border-radius:4px;padding:1.1rem;display:flex;gap:.9rem;align-items:flex-start}
+.prereq-icon{width:32px;height:32px;border-radius:4px;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0}
+.prereq-icon--blue{background:#e8f0fe}
+.prereq-icon--green{background:#f0f8f1}
+.prereq-icon--yellow{background:#fdf6e3}
+.prereq-icon--purple{background:#f3e8ff}
+.prereq-card h4{font-size:13px;font-weight:600;margin-bottom:.2rem}
+.prereq-card p{font-size:12px;color:var(--text-secondary);line-height:1.5}
+.prereq-card code{font-family:'IBM Plex Mono',monospace;font-size:11px;background:var(--code-bg);padding:1px 4px;border-radius:3px}
 
 /* CODE BLOCK */
 .code-block{border:1px solid var(--code-border);border-radius:6px;overflow:hidden;margin:.75rem 0}
@@ -114,12 +128,9 @@ body{font-family:'IBM Plex Sans',sans-serif;font-size:14px;line-height:1.6;color
 .checklist li{padding:.3rem 0 .3rem 1.5rem;position:relative;font-size:13px;color:var(--text-secondary)}
 .checklist li::before{content:'✓';position:absolute;left:0;color:var(--success);font-weight:700}
 
-/* BADGE */
-.badge{display:inline-block;padding:.15rem .5rem;font-size:11px;font-weight:600;border-radius:20px;background:#e8f0fe;color:var(--primary);letter-spacing:.05em;margin-left:.25rem}
-
 /* SUBSECTION */
-.subsection{margin-top:1.5rem}
-.subsection h3{font-size:1.1rem;font-weight:600;margin-bottom:.75rem;color:var(--text)}
+.subsection{margin-top:1.75rem}
+.subsection h3{font-size:1.05rem;font-weight:600;margin-bottom:.75rem;color:var(--text)}
 
 /* RESPONSIVE */
 @media(max-width:768px){
@@ -157,35 +168,18 @@ footer{margin-left:var(--sidebar-width);padding:1.5rem 2rem;border-top:1px solid
 
   <!-- SIDEBAR -->
   <nav class="sidebar" id="sidebar">
-    <div class="sidebar__title">Lab Sections</div>
+    <div class="sidebar__title">Lab Guide</div>
     <div class="sidebar__nav">
-      <a href="#overview" class="sidebar__link active">
-        <span class="sidebar__num">00</span> Overview
-      </a>
-      <a href="#getting-started" class="sidebar__link">
-        <span class="sidebar__num">01</span> Getting Started
-      </a>
-      <a href="#tutorial-01" class="sidebar__link">
-        <span class="sidebar__num">T1</span> Start a Project (/init)
-      </a>
-      <a href="#tutorial-02" class="sidebar__link">
-        <span class="sidebar__num">T2</span> Commit &amp; Pull Request
-      </a>
-      <a href="#tutorial-03" class="sidebar__link">
-        <span class="sidebar__num">T3</span> Literate Coding
-      </a>
-      <a href="#tutorial-04" class="sidebar__link">
-        <span class="sidebar__num">T4</span> Standardize Behavior
-      </a>
-      <a href="#tutorial-05" class="sidebar__link">
-        <span class="sidebar__num">T5</span> Add a Custom Mode
-      </a>
-      <a href="#tutorial-06" class="sidebar__link">
-        <span class="sidebar__num">T6</span> Context Window
-      </a>
-      <a href="#architecture" class="sidebar__link">
-        <span class="sidebar__num">—</span> App Architecture
-      </a>
+      <a href="#overview" class="sidebar__link active"><span class="sidebar__num">00</span> Overview</a>
+      <a href="#prerequisites" class="sidebar__link"><span class="sidebar__num">—</span> Prerequisites</a>
+      <a href="#architecture" class="sidebar__link"><span class="sidebar__num">—</span> App Architecture</a>
+      <div class="sidebar__section">Tutorials</div>
+      <a href="#t1" class="sidebar__link"><span class="sidebar__num">T1</span> Start a project (/init)</a>
+      <a href="#t2" class="sidebar__link"><span class="sidebar__num">T2</span> Inspect a codebase</a>
+      <a href="#t3" class="sidebar__link"><span class="sidebar__num">T3</span> Architecture diagrams</a>
+      <a href="#t4" class="sidebar__link"><span class="sidebar__num">T4</span> Audit code</a>
+      <a href="#t5" class="sidebar__link"><span class="sidebar__num">T5</span> Plan &amp; implement</a>
+      <a href="#t6" class="sidebar__link"><span class="sidebar__num">T6</span> Modernize Node.js</a>
     </div>
   </nav>
 
@@ -196,9 +190,9 @@ footer{margin-left:var(--sidebar-width);padding:1.5rem 2rem;border-top:1px solid
     <div class="hero" id="overview">
       <div class="hero__kicker">Workshop Lab Guide</div>
       <h1 class="hero__title">IBM <span>Bob</span> IDE<br>Tutorial Series</h1>
-      <p class="hero__lead">Hands-on tutorials for the IBM Bob IDE using the <strong style="color:#fff">Galaxium Travels</strong> fictional luxury space travel booking system. Learn agentic AI-assisted development across the full SDLC.</p>
+      <p class="hero__lead">Hands-on tutorials for the IBM Bob IDE using the <strong style="color:#fff">Galaxium Travels</strong> fictional luxury space travel booking system — covering project setup, codebase inspection, architecture diagramming, security audits, feature planning, and application modernization.</p>
       <div class="hero__actions">
-        <a href="#getting-started" class="btn btn--primary">Get Started</a>
+        <a href="#prerequisites" class="btn btn--primary">Get Started</a>
         <a href="https://github.com/IBM/galaxium-travels" class="btn btn--ghost" target="_blank" rel="noopener">View on GitHub ↗</a>
       </div>
     </div>
@@ -207,72 +201,163 @@ footer{margin-left:var(--sidebar-width);padding:1.5rem 2rem;border-top:1px solid
     <section class="section">
       <div class="section-kicker">Lab Overview</div>
       <div class="section-header"><h2>What you will accomplish</h2></div>
-      <p class="section-lead">IBM Bob is an agentic integrated development environment (IDE) that helps you write, test, upgrade, and secure software across the entire software development lifecycle (SDLC). In this tutorial series, you use Bob to add features to the Galaxium Travels demo application.</p>
-      <div class="grid grid--2" style="margin-top:1rem">
+      <p class="section-lead">IBM Bob is an agentic integrated development environment (IDE) that helps you write, test, upgrade, and secure software across the entire software development lifecycle (SDLC). In this tutorial series you work with the Galaxium Travels demo application.</p>
+      <div class="grid grid--3" style="margin-top:1rem">
         <div class="feature-card">
           <h3>Project Setup</h3>
-          <p>Set up Bob in the Galaxium Travels repository and give Bob persistent context with <code>/init</code> and AGENTS.md files.</p>
+          <p>Give Bob persistent context with <code>/init</code> and AGENTS.md so it understands your project on every conversation.</p>
         </div>
         <div class="feature-card">
-          <h3>Standardize Behavior</h3>
-          <p>Standardize Bob's behavior with custom rules files and create a custom mode to help with product management tasks.</p>
+          <h3>Codebase Inspection</h3>
+          <p>Rapidly understand an unfamiliar application — purpose, architecture, tech stack, test coverage, and deployment model.</p>
         </div>
         <div class="feature-card">
-          <h3>AI-Assisted Coding</h3>
-          <p>Write code with Bob's AI-assisted code completion features and use literate coding to generate code from written text.</p>
+          <h3>Architecture Diagrams</h3>
+          <p>Generate UML class diagrams, sequence diagrams, and use case diagrams from source code using Mermaid.</p>
         </div>
         <div class="feature-card">
-          <h3>Agentic Workflows</h3>
-          <p>Use Bob's agentic capabilities to have Bob run prompts and perform actions, including Git commits and pull requests.</p>
+          <h3>Security Audit</h3>
+          <p>Create a reusable OWASP ASVS audit skill, scan the codebase, and generate SARIF and OSCAL remediation reports.</p>
         </div>
         <div class="feature-card">
-          <h3>Context Management</h3>
-          <p>Understand how to manage the context window effectively to maintain output quality and reduce token cost.</p>
+          <h3>Plan &amp; Implement</h3>
+          <p>Use Plan mode to scope and review a feature plan before Bob writes any code — then implement with Agent mode.</p>
         </div>
         <div class="feature-card">
-          <h3>Version Control</h3>
-          <p>Use Bob's native Git integration to create branches, stage changes, commit, push, and open pull requests.</p>
+          <h3>App Modernization</h3>
+          <p>Upgrade a Node.js Express API from v16 to v22 using Bob's modes, approvals, and literate coding.</p>
         </div>
       </div>
     </section>
 
-    <!-- GETTING STARTED -->
-    <section class="section" id="getting-started">
-      <div class="section-kicker">Prerequisites</div>
-      <div class="section-header"><h2>Getting Started</h2></div>
-      <p class="section-lead">Before starting the tutorials, make sure you have the following tools installed and the Galaxium Travels demo repository cloned.</p>
+    <!-- PREREQUISITES -->
+    <section class="section" id="prerequisites">
+      <div class="section-kicker">Before You Begin</div>
+      <div class="section-header"><h2>Prerequisites</h2></div>
+      <p class="section-lead">Install and configure all required tools before starting any tutorial. Each tutorial lists its own specific requirements, but the items below are needed for the full series.</p>
 
+      <!-- Required software -->
       <div class="subsection">
-        <h3>Step 1 — Download and install IBM Bob IDE</h3>
-        <p style="font-size:13px;color:var(--text-secondary);margin-bottom:.75rem">Bob is a standalone IDE application — not a plugin or extension. Download and install it from the official site.</p>
-        <a href="https://bob.ibm.com" class="btn btn--primary" target="_blank" rel="noopener">Download Bob IDE ↗</a>
-      </div>
-
-      <div class="subsection">
-        <h3>Step 2 — Clone the Galaxium Travels demo repository</h3>
-        <p style="font-size:13px;color:var(--text-secondary);margin-bottom:.75rem">The clone command also checks out the <code>bob-learning-path-branch</code> that contains the code you use in the tutorials.</p>
-        <div class="code-block">
-          <div class="code-block__header">
-            <span class="code-block__lang">bash</span>
-            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+        <h3>Required software</h3>
+        <div class="prereq-grid">
+          <div class="prereq-card">
+            <div class="prereq-icon prereq-icon--blue">🤖</div>
+            <div>
+              <h4>IBM Bob IDE</h4>
+              <p>Bob is a standalone IDE application — not a plugin or extension. Download and install v2.x or later from the official site. You need an <strong>IBMid</strong> to sign in on first launch.</p>
+              <p style="margin-top:.4rem"><a href="https://bob.ibm.com" target="_blank" rel="noopener" style="color:var(--primary);font-weight:500;font-size:12px">Download Bob IDE ↗</a></p>
+            </div>
           </div>
-          <div class="code-body">git clone -b bob-learning-path-branch https://github.com/IBM/galaxium-travels</div>
+          <div class="prereq-card">
+            <div class="prereq-icon prereq-icon--green">🐙</div>
+            <div>
+              <h4>Git</h4>
+              <p>Required to clone the Galaxium Travels demo repository. Verify your installation:</p>
+              <p><code>git --version</code></p>
+            </div>
+          </div>
+          <div class="prereq-card">
+            <div class="prereq-icon prereq-icon--yellow">🐳</div>
+            <div>
+              <h4>Docker Desktop</h4>
+              <p>Required for the <em>Modernize Node.js</em> tutorial to build and test the containerized application.</p>
+              <p><code>docker --version</code></p>
+            </div>
+          </div>
+          <div class="prereq-card">
+            <div class="prereq-icon prereq-icon--blue">🐍</div>
+            <div>
+              <h4>Python 3.x</h4>
+              <p>Required to run the Galaxium Travels back end (FastAPI). Check your version:</p>
+              <p><code>python3 --version</code></p>
+            </div>
+          </div>
+          <div class="prereq-card">
+            <div class="prereq-icon prereq-icon--green">📦</div>
+            <div>
+              <h4>Node.js 22 + npm</h4>
+              <p>Required for the front end and the Node.js modernization tutorial. Verify:</p>
+              <p><code>node --version &amp;&amp; npm --version</code></p>
+            </div>
+          </div>
+          <div class="prereq-card">
+            <div class="prereq-icon prereq-icon--purple">☕</div>
+            <div>
+              <h4>Java 17+ &amp; Maven 3.6+</h4>
+              <p>Required to build the Galaxium Travels Java inventory hold service.</p>
+              <p><code>java -version</code><br/><code>mvn -version</code></p>
+            </div>
+          </div>
         </div>
       </div>
 
+      <!-- Install Bob -->
       <div class="subsection">
-        <h3>Step 3 — Open the project in Bob IDE</h3>
+        <h3>Install IBM Bob IDE</h3>
+        <table class="arch-table">
+          <thead><tr><th>Operating System</th><th>Installer</th><th>Notes</th></tr></thead>
+          <tbody>
+            <tr><td>macOS (Apple Silicon)</td><td>.pkg — mac-ARM</td><td>M1/M2/M3/M4 chips</td></tr>
+            <tr><td>macOS (Intel)</td><td>.pkg — mac-Intel</td><td>Intel chips</td></tr>
+            <tr><td>Windows</td><td>.exe installer</td><td>Follow the installation wizard</td></tr>
+            <tr><td>Linux (Debian)</td><td>.deb package</td><td>apt-based distributions</td></tr>
+            <tr><td>Linux (Red Hat/Fedora)</td><td>.rpm package</td><td>dnf/yum-based distributions</td></tr>
+          </tbody>
+        </table>
+        <div class="callout callout--info">
+          <div class="callout__label">IBMid Required</div>
+          <p>An IBMid is required to authenticate on first launch. If you do not have one, <a href="https://www.ibm.com/account/reg/signup" target="_blank" rel="noopener">create an IBMid</a> before installing Bob. Bob prompts you to sign in with your browser on first launch.</p>
+        </div>
+      </div>
+
+      <!-- System requirements -->
+      <div class="subsection">
+        <h3>System requirements</h3>
+        <table class="arch-table">
+          <thead><tr><th>Requirement</th><th>Minimum</th><th>Recommended</th></tr></thead>
+          <tbody>
+            <tr><td>Operating System</td><td colspan="2">macOS, Linux, or Windows</td></tr>
+            <tr><td>RAM</td><td>4 GB</td><td>8 GB or more</td></tr>
+            <tr><td>Disk space</td><td>500 MB available</td><td>2 GB+ (for Docker images)</td></tr>
+            <tr><td>Network</td><td colspan="2">Active internet connection required</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Clone the repo -->
+      <div class="subsection">
+        <h3>Clone the Galaxium Travels demo repository</h3>
+        <p style="font-size:13px;color:var(--text-secondary);margin-bottom:.6rem">Most tutorials use the <code>bob-learning-path-branch</code>. The following command clones the repo and checks out that branch:</p>
+        <div class="code-block">
+          <div class="code-block__header"><span class="code-block__lang">bash</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+          <div class="code-body">git clone -b bob-learning-path-branch https://github.com/IBM/galaxium-travels</div>
+        </div>
+        <p style="font-size:13px;color:var(--text-secondary);margin-bottom:.4rem">The <em>Inspect a codebase</em> and <em>Architecture diagrams</em> tutorials use the default branch:</p>
+        <div class="code-block">
+          <div class="code-block__header"><span class="code-block__lang">bash</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+          <div class="code-body">git clone https://github.com/IBM/galaxium-travels.git</div>
+        </div>
+        <p style="font-size:13px;color:var(--text-secondary);margin-top:.5rem">The <em>Modernize Node.js</em> tutorial uses a separate repo:</p>
+        <div class="code-block">
+          <div class="code-block__header"><span class="code-block__lang">bash</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+          <div class="code-body">https://github.com/IBM/bob-demo.git</div>
+        </div>
+      </div>
+
+      <!-- Open in Bob -->
+      <div class="subsection">
+        <h3>Open the project in Bob IDE</h3>
         <ul class="checklist">
           <li>Open Bob IDE.</li>
-          <li>Select <strong>File → Open Folder</strong>.</li>
-          <li>Choose the <code>galaxium-travels</code> directory you cloned.</li>
-          <li>Wait for the project tree to load.</li>
+          <li>Select <strong>File → Open Folder</strong> and choose the cloned directory.</li>
+          <li>If Bob asks <em>"Do you trust the authors?"</em>, click <strong>Yes, I trust the authors</strong>.</li>
+          <li>Open the Bob chat interface: click the <strong>Bob icon</strong> in the navigation bar, or press <code>⌥⌘B</code> (Mac) / <code>Ctrl+Alt+B</code> (Windows).</li>
         </ul>
       </div>
 
-      <div class="callout callout--info" style="margin-top:1.25rem">
-        <div class="callout__label">Tip</div>
-        <p>While not required, consider doing the <a href="https://bob.ibm.com/docs/ide/getting-started/quickstart" target="_blank" rel="noopener">Quickstart tutorial</a> to familiarize yourself with Bob's interface and features before starting this series.</p>
+      <div class="callout callout--warning">
+        <div class="callout__label">Auto-approval</div>
+        <p>Several tutorials ask you to turn off auto-approval so Bob requests your permission before executing each step. You can find this setting under <strong>Permissions</strong> in the chat panel.</p>
       </div>
     </section>
 
@@ -280,42 +365,42 @@ footer{margin-left:var(--sidebar-width);padding:1.5rem 2rem;border-top:1px solid
     <section class="section">
       <div class="section-kicker">Tutorial Series</div>
       <div class="section-header"><h2>Tutorials</h2></div>
-      <p class="section-lead">Follow the tutorials in order — each one builds on the previous. Each tutorial links to its own detailed walkthrough page.</p>
+      <p class="section-lead">Each tutorial is a standalone hands-on lab. Tutorial 1 is a recommended starting point for all others — it sets up the AGENTS.md context files that subsequent tutorials build on.</p>
       <div class="grid grid--2" style="margin-top:1rem">
         <a href="tutorials/01-start-a-project.html" class="tutorial-card">
           <div class="tutorial-card__num">Tutorial 01</div>
           <div class="tutorial-card__title">Start a project with /init and AGENTS.md</div>
-          <div class="tutorial-card__desc">Give Bob persistent project context across conversations and modes with /init, which automatically generates AGENTS.md files.</div>
+          <div class="tutorial-card__desc">Give Bob persistent project context across conversations and modes. Learn how /init generates AGENTS.md files and mode-specific context.</div>
           <span class="tutorial-card__arrow">→</span>
         </a>
-        <a href="tutorials/02-commit-and-pull-request.html" class="tutorial-card">
+        <a href="tutorials/02-inspect-codebase.html" class="tutorial-card">
           <div class="tutorial-card__num">Tutorial 02</div>
-          <div class="tutorial-card__title">Create a commit and pull request with Bob</div>
-          <div class="tutorial-card__desc">Use Bob to create a branch, stage changes, generate a commit message, push to your repository, and open a pull request.</div>
+          <div class="tutorial-card__title">Inspect an unfamiliar codebase</div>
+          <div class="tutorial-card__desc">Use Ask mode to systematically interrogate Galaxium Travels — purpose, architecture, tech stack, test coverage, and deployment model — without modifying any files.</div>
           <span class="tutorial-card__arrow">→</span>
         </a>
-        <a href="tutorials/03-literate-coding.html" class="tutorial-card">
+        <a href="tutorials/03-architecture-diagrams.html" class="tutorial-card">
           <div class="tutorial-card__num">Tutorial 03</div>
-          <div class="tutorial-card__title">Use literate coding to generate code from comments</div>
-          <div class="tutorial-card__desc">Use literate coding to have Bob generate code from natural language comments. Bob helps you write precise, context-aware code modifications directly in your editor.</div>
+          <div class="tutorial-card__title">Generate architecture diagrams</div>
+          <div class="tutorial-card__desc">Generate UML class diagrams, sequence diagrams, and use case diagrams from source code using context mentions in Ask mode, then save them with Agent mode.</div>
           <span class="tutorial-card__arrow">→</span>
         </a>
-        <a href="tutorials/04-standardize-behavior.html" class="tutorial-card">
+        <a href="tutorials/04-audit-code.html" class="tutorial-card">
           <div class="tutorial-card__num">Tutorial 04</div>
-          <div class="tutorial-card__title">Standardize Bob's behavior</div>
-          <div class="tutorial-card__desc">Standardize Bob's behavior across your team using project-level rules files that tell Bob to document its code and remember its previous actions.</div>
+          <div class="tutorial-card__title">Audit code and generate reports</div>
+          <div class="tutorial-card__desc">Create a reusable OWASP ASVS security audit skill, scan the codebase, and generate SARIF and OSCAL reports that developers and AI agents can act on.</div>
           <span class="tutorial-card__arrow">→</span>
         </a>
-        <a href="tutorials/05-add-custom-mode.html" class="tutorial-card">
+        <a href="tutorials/05-plan-and-implement.html" class="tutorial-card">
           <div class="tutorial-card__num">Tutorial 05</div>
-          <div class="tutorial-card__title">Add a custom mode</div>
-          <div class="tutorial-card__desc">Extend Bob's capabilities by creating a custom product manager mode with a tailored role definition, behavioral instructions, and deterministic tool access constraints.</div>
+          <div class="tutorial-card__title">Plan and implement complex features</div>
+          <div class="tutorial-card__desc">Use Plan mode to scope, review, and refine a feature plan before Bob writes any code. Then implement the approved plan with Agent mode.</div>
           <span class="tutorial-card__arrow">→</span>
         </a>
-        <a href="tutorials/06-context-window.html" class="tutorial-card">
+        <a href="tutorials/06-modernize-nodejs.html" class="tutorial-card">
           <div class="tutorial-card__num">Tutorial 06</div>
-          <div class="tutorial-card__title">Create a new context window</div>
-          <div class="tutorial-card__desc">Manage Bob's context window to preserve memory, control cost, and maintain output quality during complex or long-running conversations.</div>
+          <div class="tutorial-card__title">Modernize a Node.js application</div>
+          <div class="tutorial-card__desc">Upgrade a TypeScript Express API from Node.js 16 to 22 using Bob's modes, approval workflow, and literate coding — all in a containerized environment.</div>
           <span class="tutorial-card__arrow">→</span>
         </a>
       </div>
@@ -325,36 +410,29 @@ footer{margin-left:var(--sidebar-width);padding:1.5rem 2rem;border-top:1px solid
     <section class="section" id="architecture">
       <div class="section-kicker">Demo Application</div>
       <div class="section-header"><h2>Architecture of Galaxium Travels</h2></div>
-      <p class="section-lead">Galaxium Travels is a fictional luxury space travel booking system with a full-stack architecture. You will use this application throughout the tutorial series.</p>
+      <p class="section-lead">Galaxium Travels is a fictional luxury space travel booking system with a multi-service, full-stack architecture. Its intentional complexity — spanning three services in three languages — makes it a strong candidate for AI-assisted analysis.</p>
 
       <table class="arch-table">
-        <thead>
-          <tr>
-            <th>Layer</th>
-            <th>Technology</th>
-          </tr>
-        </thead>
+        <thead><tr><th>Layer</th><th>Technology</th><th>Key files</th></tr></thead>
         <tbody>
-          <tr><td>Front end</td><td>React, TypeScript</td></tr>
-          <tr><td>Back end</td><td>Python with REST and MCP interfaces</td></tr>
-          <tr><td>Database</td><td>SQLite with seed data</td></tr>
+          <tr><td>Front end</td><td>React, TypeScript</td><td><code>booking_system_frontend/</code></td></tr>
+          <tr><td>Back end (REST + MCP)</td><td>Python, FastAPI</td><td><code>booking_system_backend/server.py</code></td></tr>
+          <tr><td>Inventory hold service</td><td>Java, Spring Boot</td><td><code>booking_system_inventory_hold_service/</code></td></tr>
+          <tr><td>Database</td><td>SQLite with seed data</td><td><code>booking_system_backend/models.py</code></td></tr>
+          <tr><td>End-to-end tests</td><td>Playwright (or similar)</td><td><code>tests_e2e/</code></td></tr>
+          <tr><td>Infrastructure</td><td>Docker Compose, Terraform, GitHub Actions</td><td><code>docker-compose.yml</code>, <code>terraform/</code>, <code>.github/workflows/</code></td></tr>
         </tbody>
       </table>
 
       <div class="grid grid--2" style="margin-top:1.25rem">
         <div class="feature-card">
-          <h3>Front End</h3>
-          <p>The React/TypeScript front end connects to back-end REST endpoints and presents data through a user-facing interface. Features include: viewing available flights, user registration and authentication, and flight booking.</p>
+          <h3>Three services, three languages</h3>
+          <p>React/TypeScript frontend → Python FastAPI backend → Java Spring Boot inventory hold service. Bob must reason across all three service boundaries during tutorials.</p>
         </div>
         <div class="feature-card">
-          <h3>Back End</h3>
-          <p>Built around a SQLite database with data models, schemas, and seed data. Exposes a <strong>REST API</strong> for front-end consumption and an <strong>MCP interface</strong> that lets Bob interact directly with the back end as a tool.</p>
+          <h3>MCP interface</h3>
+          <p>The Python backend exposes both a standard REST API and an MCP (Model Context Protocol) interface, which lets Bob interact directly with the back end as a tool during agentic tasks.</p>
         </div>
-      </div>
-
-      <div class="callout callout--success" style="margin-top:1.25rem">
-        <div class="callout__label">Did you know?</div>
-        <p>An API browser interface is available locally to explore and interact with back-end endpoints directly, without the front end. This lets you test operations such as flight retrieval, user registration, and booking.</p>
       </div>
     </section>
 
@@ -370,27 +448,22 @@ footer{margin-left:var(--sidebar-width);padding:1.5rem 2rem;border-top:1px solid
 function toggleSidebar(){
   document.getElementById('sidebar').classList.toggle('open');
 }
-
-// Highlight active sidebar link on scroll
 const links = document.querySelectorAll('.sidebar__link');
 const sections = Array.from(document.querySelectorAll('section[id], div[id]'));
-
 function onScroll(){
-  const scrollY = window.scrollY + 80;
-  let current = sections[0];
-  sections.forEach(s => { if(s.offsetTop <= scrollY) current = s; });
+  const y = window.scrollY + 80;
+  let cur = sections[0];
+  sections.forEach(s => { if(s.offsetTop <= y) cur = s; });
   links.forEach(l => {
     l.classList.remove('active');
-    if(l.getAttribute('href') === '#' + (current && current.id)) l.classList.add('active');
+    if(l.getAttribute('href') === '#' + (cur && cur.id)) l.classList.add('active');
   });
 }
 window.addEventListener('scroll', onScroll);
-
 function copyCode(btn){
   const code = btn.closest('.code-block').querySelector('.code-body').textContent;
   navigator.clipboard.writeText(code.trim()).then(() => {
-    btn.textContent = 'Copied!';
-    btn.classList.add('copied');
+    btn.textContent = 'Copied!'; btn.classList.add('copied');
     setTimeout(() => { btn.textContent = 'Copy'; btn.classList.remove('copied'); }, 2000);
   });
 }

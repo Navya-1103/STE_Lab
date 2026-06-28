@@ -1,0 +1,383 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>Tutorial 04 — Audit code and generate reports | IBM Bob IDE Lab</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&family=IBM+Plex+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+<link rel="stylesheet" href="../assets/tutorial.css"/>
+<style>
+.phase-block{border:1px solid var(--border);border-radius:4px;margin:.75rem 0;overflow:hidden}
+.phase-block__header{display:flex;align-items:center;gap:.6rem;padding:.55rem .85rem;background:var(--bg-alt);border-bottom:1px solid var(--border)}
+.phase-dot{width:8px;height:8px;border-radius:50%;background:var(--primary);flex-shrink:0}
+.phase-block__header span{font-size:12px;font-weight:600;font-family:'IBM Plex Mono',monospace;color:var(--primary)}
+.phase-block__header p{font-size:12px;color:var(--text-secondary);margin:0}
+.phase-block__body{padding:.85rem}
+.phase-block__body p{font-size:13px;color:var(--text-secondary);margin-bottom:.5rem}
+.phase-block__body ul{padding-left:1.3rem}
+.phase-block__body li{font-size:13px;color:var(--text-secondary);margin-bottom:.25rem}
+.perm-table{width:100%;border-collapse:collapse;margin:.5rem 0}
+.perm-table th{font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.06em;color:var(--text-secondary);padding:.4rem .6rem;border-bottom:2px solid var(--border);text-align:left}
+.perm-table td{font-size:12px;padding:.4rem .6rem;border-bottom:1px solid var(--border);color:var(--text-secondary)}
+.perm-table td:first-child{font-weight:600;color:var(--text);font-family:'IBM Plex Mono',monospace}
+.perm-on{color:var(--success);font-weight:700}
+.perm-off{color:var(--text-muted);font-weight:700}
+.asvs-row{display:grid;grid-template-columns:90px 1fr;gap:.4rem .75rem;padding:.5rem 0;border-bottom:1px solid var(--border);font-size:12px}
+.asvs-row:last-child{border-bottom:none}
+.asvs-id{font-family:'IBM Plex Mono',monospace;color:var(--primary);font-weight:600;font-size:11px;padding-top:.1rem}
+.asvs-desc{color:var(--text-secondary)}
+</style>
+</head>
+<body>
+<header class="topbar">
+  <div class="topbar__brand">
+    <button class="menu-toggle" onclick="document.getElementById('sidebar').classList.toggle('open')" aria-label="Menu">&#9776;</button>
+    <div class="logo-dot"></div>
+    <div>
+      <div class="brand-kicker">IBM BOB</div>
+      <div class="brand-title">IDE Tutorial Lab Guide</div>
+    </div>
+  </div>
+  <div class="topbar__meta">
+    <a href="https://bob.ibm.com/docs/ide/tutorials/audit-code" class="topbar__link" target="_blank" rel="noopener">Official Docs ↗</a>
+  </div>
+</header>
+
+<div class="layout">
+  <nav class="sidebar" id="sidebar">
+    <a href="../index.html" class="sidebar__back">← Back to Lab Home</a>
+    <div class="sidebar__title">On This Page</div>
+    <div class="sidebar__nav">
+      <a href="#overview" class="sidebar__link active"><span class="sidebar__num">—</span> Overview &amp; Scenario</a>
+      <a href="#prereqs" class="sidebar__link"><span class="sidebar__num">—</span> Prerequisites</a>
+      <a href="#setup" class="sidebar__link"><span class="sidebar__num">01</span> Set up the lab</a>
+      <a href="#create-skill" class="sidebar__link"><span class="sidebar__num">02</span> Create an audit skill</a>
+      <a href="#find-risks" class="sidebar__link"><span class="sidebar__num">03</span> Find high-risk areas</a>
+      <a href="#create-plan" class="sidebar__link"><span class="sidebar__num">04</span> Create audit plan</a>
+      <a href="#run-audit" class="sidebar__link"><span class="sidebar__num">05</span> Run the audit</a>
+      <a href="#sarif" class="sidebar__link"><span class="sidebar__num">06</span> Generate SARIF report</a>
+      <a href="#oscal" class="sidebar__link"><span class="sidebar__num">07</span> Generate OSCAL POA&amp;M</a>
+      <a href="#review" class="sidebar__link"><span class="sidebar__num">08</span> Review findings</a>
+    </div>
+  </nav>
+
+  <main class="content">
+    <div class="page-header">
+      <div class="page-kicker">Tutorial 04 · Security</div>
+      <h1>Audit code and generate reports</h1>
+      <p class="page-lead">Use IBM Bob to create a reusable security audit skill, scan an application against OWASP ASVS requirements, and generate SARIF and OSCAL reports that developers and AI agents can act on.</p>
+    </div>
+
+    <div class="step" id="overview">
+      <div class="step-num">Overview &amp; Scenario</div>
+      <h2>What you will build</h2>
+      <p>The Galaxium Travels application has grown into a complex codebase. A full manual security review is time-consuming and inconsistent across team members. In this tutorial you use IBM Bob to create a <strong>repeatable process</strong> that produces structured output developers can act on immediately and that can feed into an automated remediation pipeline.</p>
+      <div class="callout callout--info">
+        <div class="callout__label">What you produce</div>
+        <p><strong>SARIF report</strong> (<code>security/audit-results.sarif</code>) — Machine-readable findings compatible with IDEs, GitHub Advanced Security, and CI/CD pipelines.<br/>
+        <strong>OSCAL POA&amp;M</strong> (<code>security/poam.json</code>) — Structured remediation map that an AI agent can use to work through fixes systematically.</p>
+      </div>
+      <p>This tutorial audits against <strong>OWASP ASVS Level 1</strong> controls in four categories:</p>
+      <div style="margin:.75rem 0;background:var(--bg-alt);border:1px solid var(--border);border-radius:4px;padding:.85rem 1rem">
+        <div class="asvs-row"><span class="asvs-id">V4.1.3</span><span class="asvs-desc">Users can only access their own resources (access control)</span></div>
+        <div class="asvs-row"><span class="asvs-id">V4.1.5</span><span class="asvs-desc">Access control denies by default — unauthenticated requests rejected</span></div>
+        <div class="asvs-row"><span class="asvs-id">V4.2.1</span><span class="asvs-desc">IDOR protection — sensitive resources not accessible via predictable object IDs</span></div>
+        <div class="asvs-row"><span class="asvs-id">V5.1.1</span><span class="asvs-desc">All string inputs have defined maximum length constraints</span></div>
+        <div class="asvs-row"><span class="asvs-id">V13.1.3</span><span class="asvs-desc">API endpoints do not accept credentials or PII in URL query parameters</span></div>
+        <div class="asvs-row"><span class="asvs-id">V14.4.1</span><span class="asvs-desc">HTTP responses include Content-Security-Policy, X-Frame-Options, X-Content-Type-Options</span></div>
+        <div class="asvs-row"><span class="asvs-id">V14.5.3</span><span class="asvs-desc">CORS origin validated against an explicit allowlist — no wildcard origins</span></div>
+      </div>
+    </div>
+
+    <div class="step" id="prereqs">
+      <div class="step-num">Prerequisites</div>
+      <h2>What you need</h2>
+      <ul>
+        <li><strong>IBM Bob IDE</strong> v2.x or later.</li>
+        <li><strong>Git</strong> to clone the example repository.</li>
+      </ul>
+    </div>
+
+    <div class="step" id="setup">
+      <div class="step-num">Step 01</div>
+      <h2>Set up the lab</h2>
+      <div class="code-block">
+        <div class="code-block__header"><span class="code-block__lang">bash</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+        <div class="code-body">git clone -b bob-learning-path-branch https://github.com/IBM/galaxium-travels</div>
+      </div>
+      <ol>
+        <li>Click <strong>File → Open Folder</strong> and open the <code>galaxium-travels</code> directory.</li>
+        <li>Open the Bob chat interface (<code>⌥⌘B</code> Mac / <code>Ctrl+Alt+B</code> Windows).</li>
+        <li>Run <code>/init</code> to initialize the development environment and create the AGENTS.md files.</li>
+      </ol>
+      <div class="code-block">
+        <div class="code-block__header"><span class="code-block__lang">bob chat</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+        <div class="code-body">/init</div>
+      </div>
+      <p>Click <strong>Approve todo tools for task</strong> if prompted.</p>
+    </div>
+
+    <div class="step" id="create-skill">
+      <div class="step-num">Step 02</div>
+      <h2>Create an audit skill</h2>
+      <p>A <strong>skill</strong> is a reusable instruction set that Bob follows to work through a specific task. You create a skill that audits the codebase against the OWASP ASVS controls listed above.</p>
+
+      <h3>Open skill settings</h3>
+      <ol>
+        <li>Under the chat interface, click <strong>Bob Settings</strong>.</li>
+        <li>Click <strong>Skills</strong> in the left sidebar.</li>
+        <li>Click the <strong>+</strong> button to create a new skill.</li>
+      </ol>
+
+      <h3>Fill in skill details</h3>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Field</th><th>Value</th></tr></thead>
+          <tbody>
+            <tr><td>Skill Name</td><td><code>asvs-audit</code></td></tr>
+            <tr><td>Description</td><td>Audits a codebase against OWASP ASVS Level 1 access control, input validation, API security, and configuration requirements.</td></tr>
+            <tr><td>Allow Bob to use this skill</td><td>Toggle <strong>ON</strong> — Bob can activate the skill automatically when a plan calls for it</td></tr>
+            <tr><td>Scope &amp; Location</td><td><code>galaxium-travels</code> — saves to <code>.bob/skills/</code>, version-controlled with the codebase</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h3>Skill instructions</h3>
+      <p>Paste the following into the <strong>Skill Instructions</strong> textbox:</p>
+      <div class="code-block">
+        <div class="code-block__header"><span class="code-block__lang">SKILL.md — asvs-audit</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+        <div class="code-body">---
+name: asvs-audit
+description: Audit a codebase against OWASP ASVS Level 1 access control, input validation, API security, and configuration requirements and produce structured findings ready for SARIF and OSCAL export.
+user-invocable: true
+---
+
+Perform a structured security audit of this codebase. Work through the following phases in order. Do not skip phases or combine them.
+
+## Phase 1: Discover
+Read and understand the application before auditing. Focus on:
+- Entry points: main files, route definitions, controllers
+- Authentication and session handling code
+- Input validation and sanitization code
+- Database query code
+- Any files flagged as high-risk in earlier analysis
+
+Summarize what you find before proceeding to Phase 2.
+
+## Phase 2: Audit
+Check each control below. For each one record: PASS, FAIL, or N/A. For every FAIL, record the file path and line number.
+
+### V4.1 General Access Control
+- V4.1.3 — Users can only access their own resources; other users' data is not accessible
+- V4.1.5 — Access control denies by default — unauthenticated requests are rejected
+
+### V4.2 Operation Level Access Control
+- V4.2.1 — Sensitive resources cannot be accessed by manipulating a predictable object ID (IDOR protection)
+
+### V5.1 Input Validation
+- V5.1.1 — All string inputs have defined maximum length constraints
+
+### V13.1 Generic Web Service Security
+- V13.1.3 — API endpoints do not accept credentials or PII in URL query parameters
+
+### V14.4 HTTP Security Headers
+- V14.4.1 — HTTP responses include appropriate security headers such as Content-Security-Policy, X-Frame-Options, and X-Content-Type-Options
+
+### V14.5 HTTP Request Header Validation
+- V14.5.3 — CORS origin is validated against an explicit allowlist — wildcard origins are not permitted
+
+## Phase 3: Generate Findings
+For each FAIL, produce a finding in this format:
+**Finding [N]:**
+- Rule: ASVS [control number]
+- Severity: Critical / High / Medium / Low
+- File: [path]
+- Line: [number or range, if identifiable]
+- Issue: [one sentence describing what was found]
+- Fix: [one sentence describing the recommended change]
+
+## Phase 4: Summary
+Produce a short summary:
+- Total controls checked
+- Pass / Fail / N/A counts
+- Two-sentence overall security posture assessment
+
+Save the findings to the location specified by the plan or prompt that invoked this skill.
+Do not generate SARIF, OSCAL, or other report files — report generation is a separate task.
+Report that the audit is complete and wait for the next instruction.</div>
+      </div>
+      <p>Click <strong>Create</strong> to save the skill.</p>
+    </div>
+
+    <div class="step" id="find-risks">
+      <div class="step-num">Step 03</div>
+      <h2>Find high-risk areas to audit</h2>
+      <p>Before running the full audit, ask Bob to identify the files and folders most relevant to security. This saves tokens by focusing the audit on the highest-risk areas.</p>
+      <p>Switch to <strong>Ask mode</strong> (click the mode selector or type <code>/ask</code>).</p>
+      <div class="code-block">
+        <div class="code-block__header"><span class="code-block__lang">bob prompt — Ask mode</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+        <div class="code-body">Explore this codebase as a Senior Security Analyst. Give me a short summary covering:
+1. The primary tech stack and framework
+2. Identify the files and folders most relevant to security
+Make sure to also review:
+1. How authentication and session management are handled
+2. How user input is accepted and validated
+3. Where database queries are made
+4. Any API endpoints that accept external input
+I want to understand the highest security risk areas before running an audit.</div>
+      </div>
+      <p>Bob reads the files and responds with a summary of the application's security surface area.</p>
+    </div>
+
+    <div class="step" id="create-plan">
+      <div class="step-num">Step 04</div>
+      <h2>Create a plan for auditing the high-risk areas</h2>
+      <p>Switch to <strong>Plan mode</strong> (click the mode selector or type <code>/plan</code>).</p>
+      <div class="code-block">
+        <div class="code-block__header"><span class="code-block__lang">bob prompt — Plan mode</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+        <div class="code-body">Create a plan for auditing the high-risk areas found in the previous exploration. When auditing, use the asvs-audit skill to guide the process. When the plan runs, create the security/ directory if it does not exist and save the findings to security/audit-findings.md
+Save the plan to plan/audit-plan.md</div>
+      </div>
+      <p>Bob may ask follow-up questions to clarify the scope. Answer them or tell Bob to use its best recommendation. Click <strong>Approve todo tools for task</strong> if prompted.</p>
+      <p>Open the generated plan file to understand the audit approach before running it.</p>
+    </div>
+
+    <div class="step" id="run-audit">
+      <div class="step-num">Step 05</div>
+      <h2>Run the audit</h2>
+      <p>Click <strong>+</strong> to start a new task, then switch to <strong>Agent mode</strong>. Set the following permissions in the chat panel:</p>
+      <table class="perm-table">
+        <thead><tr><th>Permission</th><th>State</th><th>Why</th></tr></thead>
+        <tbody>
+          <tr><td>Read</td><td class="perm-on">✅ On</td><td>Bob reads the codebase, the audit plan, and the skill</td></tr>
+          <tr><td>Edit</td><td class="perm-on">✅ On</td><td>Bob writes findings to <code>security/audit-findings.md</code></td></tr>
+          <tr><td>Execute</td><td class="perm-on">✅ On</td><td>Bob may run shell commands to resolve paths or confirm file structure</td></tr>
+          <tr><td>Skill</td><td class="perm-on">✅ On</td><td>The audit plan invokes the asvs-audit skill</td></tr>
+          <tr><td>MCP</td><td class="perm-off">❌ Off</td><td>Not needed for local code analysis</td></tr>
+        </tbody>
+      </table>
+      <div class="code-block">
+        <div class="code-block__header"><span class="code-block__lang">bob prompt — Agent mode</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+        <div class="code-body">Implement the @plan/audit-plan.md</div>
+      </div>
+      <p>Review the findings in <code>security/audit-findings.md</code> when the audit is complete. Saving the findings lets you start a fresh context window for report generation without re-reading the entire codebase.</p>
+      <div class="callout callout--warning">
+        <div class="callout__label">Large codebases</div>
+        <p>If you exceed the context window while auditing, try auditing one ASVS category at a time — run V4 first, then V5, V13, and V14 — and ask Bob to consolidate findings at the end.</p>
+      </div>
+    </div>
+
+    <div class="step" id="sarif">
+      <div class="step-num">Step 06</div>
+      <h2>Generate a SARIF report</h2>
+      <p>SARIF is the standard interchange format for static analysis results. IDEs including Bob, GitHub Advanced Security, and most CI/CD pipelines can consume SARIF files directly.</p>
+      <p>Click <strong>+</strong> to start a <em>new task</em>. Switch to <strong>Agent mode</strong> and set permissions:</p>
+      <table class="perm-table">
+        <thead><tr><th>Permission</th><th>State</th><th>Why</th></tr></thead>
+        <tbody>
+          <tr><td>Read</td><td class="perm-on">✅ On</td><td>Bob reads findings in <code>security/audit-findings.md</code></td></tr>
+          <tr><td>Edit</td><td class="perm-on">✅ On</td><td>Bob writes the SARIF report to the <code>security/</code> directory</td></tr>
+          <tr><td>Execute</td><td class="perm-on">✅ On</td><td>Bob may run shell commands to resolve paths</td></tr>
+          <tr><td>Skill</td><td class="perm-off">❌ Off</td><td>The skill already created the findings; not needed for report generation</td></tr>
+          <tr><td>MCP</td><td class="perm-off">❌ Off</td><td>Not needed for local analysis</td></tr>
+        </tbody>
+      </table>
+      <div class="code-block">
+        <div class="code-block__header"><span class="code-block__lang">bob prompt — Agent mode</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+        <div class="code-body">@security/audit-findings.md Generate a SARIF 2.1.0 report from the audit findings. Save it to `security/audit-results.sarif`. Include:
+- Tool name: "ASVS Security Audit"
+- A rule entry for each ASVS control that was checked, with the control ID and description
+- A result entry for each finding, with severity level, file path, line number, and the fix recommendation in the message field</div>
+      </div>
+      <p>Bob generates <code>security/audit-results.sarif</code>. Confirm the file contains a <code>runs</code> array with <code>results</code> entries — one per finding.</p>
+      <div class="callout callout--info">
+        <div class="callout__label">Severity mapping</div>
+        <p>Bob maps severity as: Critical/High → SARIF <code>error</code>; Medium/Low → SARIF <code>warning</code>. The <code>message.text</code> for each result contains the full issue description and fix recommendation inline — so tooling like GitHub Code Scanning surfaces the remediation guidance directly in the UI.</p>
+      </div>
+    </div>
+
+    <div class="step" id="oscal">
+      <div class="step-num">Step 07</div>
+      <h2>Generate an OSCAL remediation plan (POA&amp;M)</h2>
+      <p>The OSCAL Plan of Action and Milestones (POA&amp;M) is a machine-readable JSON document that maps each finding to a structured remediation task with risk information, implementation guidance, and milestone assignments. Bob can read this file as a work queue — it works through each item, applies fixes, and marks milestones complete as it goes.</p>
+      <p>Click <strong>+</strong> to start a new task. Switch to <strong>Agent mode</strong> with the same Read/Edit/Execute permissions as the SARIF step.</p>
+      <div class="code-block">
+        <div class="code-block__header"><span class="code-block__lang">bob prompt — Agent mode</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+        <div class="code-body">@security/audit-findings.md Generate an OSCAL Plan of Action and Milestones (POA&M) from the audit findings. Save it to `security/poam.json`. For each finding include:
+- A unique UUID
+- The ASVS control ID as the finding reference
+- Severity and a one-sentence risk description
+- A concrete remediation task with enough detail for an AI agent to implement it without additional context — include file path, line reference, and the specific change required
+- A milestone label based on severity: Critical and High findings get "sprint-1", Medium and Low get "sprint-2"
+Use OSCAL version 1.1.2 structure.</div>
+      </div>
+      <p>Bob generates <code>security/poam.json</code>. Each <code>poam-item</code> contains <code>props</code> (severity, ASVS control, milestone), <code>risks[]</code>, <code>remediations[]</code>, and <code>tasks[]</code> — with concrete, AI-actionable implementation details.</p>
+      <div class="callout callout--success">
+        <div class="callout__label">You now have two artifacts</div>
+        <p><code>security/audit-results.sarif</code> — structured findings for developer tooling and CI/CD integration.<br/>
+        <code>security/poam.json</code> — a remediation work queue for AI-assisted or human-driven remediation.</p>
+      </div>
+    </div>
+
+    <div class="step" id="review">
+      <div class="step-num">Step 08</div>
+      <h2>Review findings and prioritize</h2>
+      <p>Click <strong>+</strong> to start a new task. Switch to <strong>Ask mode</strong>.</p>
+      <div class="code-block">
+        <div class="code-block__header"><span class="code-block__lang">bob prompt — Ask mode</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+        <div class="code-body">@security/poam.json Review this remediation plan and identify the 3 most critical items to fix first. For each one include:
+- What the vulnerability is and why it is the highest priority
+- Which file and line to look at
+- What the fix involves and roughly how long it would take a developer to implement</div>
+      </div>
+      <p>Bob reads the POA&amp;M and returns a prioritized summary similar to:</p>
+      <div class="callout callout--warning">
+        <div class="callout__label">Example findings — Galaxium Travels</div>
+        <p><strong>#1 — No authentication on any endpoint (V4.1.5 · Critical)</strong><br/>
+        Zero authentication means any anonymous caller can execute all booking operations. This is the foundational flaw that makes every other vulnerability worse. Effort: 2–4 h.</p>
+        <p style="margin-top:.5rem"><strong>#2 — Wildcard CORS origin (V14.5.3 · High)</strong><br/>
+        Any origin can make credentialed requests to the API. Effort: 30 min.</p>
+        <p style="margin-top:.5rem"><strong>#3 — PII in URL query parameters on GET /user (V13.1.3 · High)</strong><br/>
+        Email addresses appear in GET query strings, silently leaking into server logs, proxy logs, and browser history. Effort: 1–2 h.</p>
+      </div>
+    </div>
+
+    <div class="nav-footer">
+      <a href="03-architecture-diagrams.html" class="nav-btn">
+        <span class="nav-btn__dir">← Previous</span>
+        <span class="nav-btn__title">Generate architecture diagrams</span>
+      </a>
+      <a href="05-plan-and-implement.html" class="nav-btn nav-btn--next">
+        <span class="nav-btn__dir">Next →</span>
+        <span class="nav-btn__title">Plan and implement complex features</span>
+      </a>
+    </div>
+  </main>
+</div>
+
+<footer>
+  IBM Bob IDE Tutorial Lab Guide &nbsp;·&nbsp; Tutorial 04 of 06
+  <br><span style="color:#c6c6c6;font-size:11px">Made with IBM Bob</span>
+</footer>
+
+<script>
+function copyCode(btn){
+  const code = btn.closest('.code-block').querySelector('.code-body').textContent;
+  navigator.clipboard.writeText(code.trim()).then(() => {
+    btn.textContent = 'Copied!'; btn.classList.add('copied');
+    setTimeout(() => { btn.textContent = 'Copy'; btn.classList.remove('copied'); }, 2000);
+  });
+}
+const links = document.querySelectorAll('.sidebar__link');
+const steps = document.querySelectorAll('.step[id]');
+window.addEventListener('scroll', () => {
+  const y = window.scrollY + 70;
+  let cur = steps[0];
+  steps.forEach(s => { if(s.offsetTop <= y) cur = s; });
+  links.forEach(l => { l.classList.remove('active'); if(l.getAttribute('href') === '#' + (cur && cur.id)) l.classList.add('active'); });
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>Tutorial 03 — Generate architecture diagrams | IBM Bob IDE Lab</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&family=IBM+Plex+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+<link rel="stylesheet" href="../assets/tutorial.css"/>
+</head>
+<body>
+<header class="topbar">
+  <div class="topbar__brand">
+    <button class="menu-toggle" onclick="document.getElementById('sidebar').classList.toggle('open')" aria-label="Menu">&#9776;</button>
+    <div class="logo-dot"></div>
+    <div>
+      <div class="brand-kicker">IBM BOB</div>
+      <div class="brand-title">IDE Tutorial Lab Guide</div>
+    </div>
+  </div>
+  <div class="topbar__meta">
+    <a href="https://bob.ibm.com/docs/ide/tutorials/generate-architecture-diagrams" class="topbar__link" target="_blank" rel="noopener">Official Docs ↗</a>
+  </div>
+</header>
+
+<div class="layout">
+  <nav class="sidebar" id="sidebar">
+    <a href="../index.html" class="sidebar__back">← Back to Lab Home</a>
+    <div class="sidebar__title">On This Page</div>
+    <div class="sidebar__nav">
+      <a href="#overview" class="sidebar__link active"><span class="sidebar__num">—</span> Overview</a>
+      <a href="#prereqs" class="sidebar__link"><span class="sidebar__num">—</span> Prerequisites</a>
+      <a href="#setup" class="sidebar__link"><span class="sidebar__num">01</span> Set up workspace</a>
+      <a href="#class-diagram" class="sidebar__link"><span class="sidebar__num">02</span> UML class diagram</a>
+      <a href="#sequence-diagram" class="sidebar__link"><span class="sidebar__num">03</span> Sequence diagram</a>
+      <a href="#use-case" class="sidebar__link"><span class="sidebar__num">04</span> Use case diagram</a>
+      <a href="#save-diagrams" class="sidebar__link"><span class="sidebar__num">05</span> Save to repository</a>
+      <a href="#troubleshooting" class="sidebar__link"><span class="sidebar__num">—</span> Troubleshooting</a>
+    </div>
+  </nav>
+
+  <main class="content">
+    <div class="page-header">
+      <div class="page-kicker">Tutorial 03 · Visualization</div>
+      <h1>Generate architecture diagrams</h1>
+      <p class="page-lead">Use IBM Bob to analyze the Galaxium Travels codebase and generate Mermaid UML class diagrams, sequence diagrams, and use case diagrams. Use context mentions in Ask mode to explore code and Agent mode to save results to your repository.</p>
+    </div>
+
+    <div class="step" id="overview">
+      <div class="step-num">Overview</div>
+      <h2>What you will learn</h2>
+      <p>Architecture diagrams give you a shared visual language for a codebase before you modify it. In this tutorial, you use Bob to read the Galaxium Travels source files and generate three types of UML diagrams using <strong>Mermaid</strong> markup:</p>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Diagram type</th><th>What it shows</th></tr></thead>
+          <tbody>
+            <tr><td>UML class diagram</td><td>Data model — entities, attributes, and relationships between them</td></tr>
+            <tr><td>Sequence diagram</td><td>Runtime flow — how components interact in a specific lifecycle, ordered by time</td></tr>
+            <tr><td>Use case diagram</td><td>Actors and capabilities — all actors and the features each actor can exercise</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="callout callout--info">
+        <div class="callout__label">Key features you learn</div>
+        <p><strong>Context mentions (@)</strong> — Reference specific files/folders to give Bob precise analysis scope.<br/>
+        <strong>Ask mode</strong> — Safely explore code and generate diagram markup without modifying files.<br/>
+        <strong>Agent mode</strong> — Write the generated diagrams to the repository.<br/>
+        GitHub provides native Mermaid rendering in Markdown files, so you can commit the <code>.md</code> files and view rendered diagrams directly on GitHub.</p>
+      </div>
+    </div>
+
+    <div class="step" id="prereqs">
+      <div class="step-num">Prerequisites</div>
+      <h2>What you need</h2>
+      <ul>
+        <li>Bob IDE installed.</li>
+        <li>Git installed locally.</li>
+        <li>Familiarity with the basics of Bob. If new, start with the <a href="https://bob.ibm.com/docs/ide/getting-started/quickstart" target="_blank" rel="noopener">Quickstart tutorial</a>.</li>
+      </ul>
+      <div class="callout callout--warning">
+        <div class="callout__label">Note — default branch</div>
+        <p>This tutorial uses the <strong>default branch</strong> of Galaxium Travels (not <code>bob-learning-path-branch</code>), which contains the full multi-service codebase needed for accurate diagram generation.</p>
+      </div>
+    </div>
+
+    <div class="step" id="setup">
+      <div class="step-num">Step 01</div>
+      <h2>Set up your workspace</h2>
+      <h3>Clone the repository</h3>
+      <div class="code-block">
+        <div class="code-block__header"><span class="code-block__lang">bash</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+        <div class="code-body">git clone https://github.com/ibm/galaxium-travels.git</div>
+      </div>
+      <h3>Open the project in Bob IDE</h3>
+      <ol>
+        <li>Launch IBM Bob IDE and open the <code>galaxium-travels</code> folder.</li>
+        <li>Open the Bob chat interface (<code>⌥⌘B</code> on Mac / <code>Ctrl+Alt+B</code> on Windows).</li>
+        <li>Review <code>README.md</code> in the root directory to get an overview of the application architecture.</li>
+      </ol>
+      <h3>Initialize project context</h3>
+      <p>Run <code>/init</code> in Agent mode to generate AGENTS.md context files. Review the generated files to understand how Bob has set up the project context.</p>
+      <div class="code-block">
+        <div class="code-block__header"><span class="code-block__lang">bob chat</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+        <div class="code-body">/init</div>
+      </div>
+      <h3>Switch to Ask mode</h3>
+      <p>Select <strong>Ask</strong> in the mode selector, or type <code>/ask</code>. Ask mode is read-only — Bob can read and analyze files but cannot create or modify anything.</p>
+    </div>
+
+    <div class="step" id="class-diagram">
+      <div class="step-num">Step 02</div>
+      <h2>Generate a UML class diagram</h2>
+      <p>A UML class diagram maps the data model of an application: the entities (classes), their attributes, and the relationships between them. For Galaxium Travels, this covers the Python SQLAlchemy models in the backend and the Java domain classes in the inventory hold service.</p>
+      <div class="callout callout--info">
+        <div class="callout__label">Raw markup tip</div>
+        <p>By default, Bob outputs Mermaid diagrams as rendered images. To review the raw Mermaid markup, add the instruction <em>"Output only the Mermaid code block. Do not render the Mermaid diagram."</em> to your prompt.</p>
+      </div>
+      <div class="code-block">
+        <div class="code-block__header"><span class="code-block__lang">bob prompt — Ask mode</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+        <div class="code-body">Analyze the data models in @booking_system_backend/models.py and the Java domain classes in @booking_system_inventory_hold_service/src/main/java/com/galaxium/holdservice/domain. Generate a Mermaid classDiagram that shows all classes, their attributes, their methods (if any), and the relationships between them. Include the BookingStatus enum. Output the Mermaid markup. Do not render the Mermaid diagram.</div>
+      </div>
+      <p>Bob reads both files and produces a <code>classDiagram</code> that covers:</p>
+      <ul class="checklist">
+        <li>Python/SQLAlchemy models: <code>User</code>, <code>Flight</code>, <code>Booking</code>, <code>BookingStatus</code></li>
+        <li>Java/JPA models: <code>Quote</code>, <code>Hold</code>, <code>AuditEvent</code>, <code>QuoteStatus</code>, <code>HoldStatus</code></li>
+        <li>All relationships between entities (1-to-many, enumerations)</li>
+      </ul>
+    </div>
+
+    <div class="step" id="sequence-diagram">
+      <div class="step-num">Step 03</div>
+      <h2>Generate a sequence diagram</h2>
+      <p>A sequence diagram shows how components interact at runtime in a specific flow, ordered by time. The Galaxium Travels booking flow spans the React frontend, the Python FastAPI backend, and the Java inventory hold service.</p>
+      <div class="code-block">
+        <div class="code-block__header"><span class="code-block__lang">bob prompt — Ask mode</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+        <div class="code-body">Analyze the booking flow across @booking_system_frontend/src/services, @booking_system_backend/server.py, @booking_system_backend/services/booking.py, and @booking_system_inventory_hold_service/src/main/java/com/galaxium/holdservice/api. Generate a Mermaid sequenceDiagram showing the complete flow for a user booking a flight, including the quote and hold steps with the Java service. Output the Mermaid markup. Do not render the Mermaid diagram.</div>
+      </div>
+      <p>Bob traces the interaction chain across all three services and produces a <code>sequenceDiagram</code> that covers:</p>
+      <ul class="checklist">
+        <li><strong>Phase 1 — Create Quote:</strong> User → Frontend → Python backend → Java QuoteService → Database</li>
+        <li><strong>Phase 2 — Create Hold:</strong> Quote ID → HoldService → 15-minute hold reservation</li>
+        <li><strong>Phase 3 — Confirm Hold → Create Booking:</strong> Hold confirmation → Python BookingService → seat decrement → Booking record</li>
+        <li>Error paths: booking failed (name mismatch / no seats / user not found)</li>
+      </ul>
+    </div>
+
+    <div class="step" id="use-case">
+      <div class="step-num">Step 04</div>
+      <h2>Generate a use case diagram</h2>
+      <p>A use case diagram identifies the actors in a system and the capabilities each actor can exercise. Mermaid does not have a native use case diagram type, so you represent this with a <code>flowchart LR</code> that groups use cases by actor.</p>
+      <div class="callout callout--info">
+        <div class="callout__label">Escaping curly braces</div>
+        <p>Instruct Bob to escape curly braces in the Mermaid markup so the renderer does not attempt to interpret them as template syntax. Use <code>&amp;#123;</code> for <code>{</code> and <code>&amp;#125;</code> for <code>}</code>.</p>
+      </div>
+      <div class="code-block">
+        <div class="code-block__header"><span class="code-block__lang">bob prompt — Ask mode</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+        <div class="code-body">Analyze the full Galaxium Travels application. Identify all actors (user types or external systems) and the use cases each actor can perform, based on the frontend pages, backend REST endpoints, and MCP tools. Generate a Mermaid flowchart LR that represents this as a use case diagram, grouping use cases under their respective actors using subgraphs. Escape curly braces in Mermaid markup so that the Mermaid renderer does not attempt to interpret the curly braces as template syntax. Output the Mermaid markup. Do not render the Mermaid diagram.</div>
+      </div>
+      <p>Bob analyzes the application and produces a flowchart with subgraphs for each actor:</p>
+      <ul class="checklist">
+        <li><strong>Traveller (Browser)</strong> — browse flights, search/filter, register, sign in, select seat class, quote, hold, confirm, view/cancel bookings</li>
+        <li><strong>AI Agent (MCP Client)</strong> — list_flights, register_user, get_user_id, book_flight, get_bookings, cancel_booking</li>
+        <li><strong>Java Hold Service (Internal)</strong> — confirm hold via internal endpoint, auto-expire holds</li>
+        <li><strong>Python REST API (External Consumers)</strong> — all public REST endpoints</li>
+      </ul>
+    </div>
+
+    <div class="step" id="save-diagrams">
+      <div class="step-num">Step 05</div>
+      <h2>Save diagrams to the repository</h2>
+      <h3>Switch to Agent mode</h3>
+      <p>Select <strong>Agent</strong> in the mode selector, or type <code>/agent</code>.</p>
+      <h3>Save all three diagrams</h3>
+      <div class="code-block">
+        <div class="code-block__header"><span class="code-block__lang">bob prompt — Agent mode</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+        <div class="code-body">Create a docs/architecture/ folder in the repository root. Save each of the three diagrams we generated as individual Markdown files:
+- class-diagram.md — the UML class diagram
+- sequence-diagram.md — the booking flow sequence diagram
+- use-case-diagram.md — the use case flowchart
+Each file should have a short title heading, the Mermaid code block we generated, and a brief description of the diagram.</div>
+      </div>
+      <p>Bob creates the three files. Click <strong>Approve and Save</strong> for each file Bob writes.</p>
+      <h3>Verify the output</h3>
+      <p>Open each file in the Bob file explorer to confirm the Mermaid fenced code blocks are present. To preview a rendered diagram:</p>
+      <div class="code-block">
+        <div class="code-block__header"><span class="code-block__lang">bob prompt</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+        <div class="code-body">Show me a preview of docs/architecture/class-diagram.md</div>
+      </div>
+      <div class="callout callout--success">
+        <div class="callout__label">GitHub rendering</div>
+        <p>Commit and push the changes to a GitHub repository — GitHub natively renders Mermaid diagrams in Markdown files, so you can view all three diagrams rendered directly on GitHub without any additional tooling.</p>
+      </div>
+    </div>
+
+    <div class="step" id="troubleshooting">
+      <div class="step-num">Troubleshooting</div>
+      <h2>Mermaid markup that does not compile</h2>
+      <p>Mermaid's parser is strict. Use the following reference to diagnose and fix issues. Paste failing markup into the <a href="https://mermaid.live" target="_blank" rel="noopener">Mermaid Live Editor</a> to see the exact parse error.</p>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Symptom</th><th>Likely cause</th><th>Fix</th></tr></thead>
+          <tbody>
+            <tr><td>Parse error near <code>{</code> or <code>}</code></td><td>Curly braces unescaped in labels</td><td>Replace with <code>&amp;#123;</code> and <code>&amp;#125;</code></td></tr>
+            <tr><td>Parse error near <code>(</code> or <code>)</code></td><td>Parentheses in a node ID</td><td>Wrap the label in quotes: <code>A["label (note)"]</code></td></tr>
+            <tr><td>Unexpected end or subgraph error</td><td>Subgraph not closed</td><td>Ensure every <code>subgraph</code> block has a matching <code>end</code></td></tr>
+            <tr><td>Arrow type not recognized</td><td>Wrong arrow syntax for diagram type</td><td><code>--&gt;</code> for flowchart; <code>-&gt;&gt;</code> / <code>--&gt;&gt;</code> for sequenceDiagram</td></tr>
+            <tr><td>Diagram renders partially then stops</td><td>Label contains a bare <code>"</code> character</td><td>Escape quotes inside labels</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p>To ask Bob to fix a specific parse error:</p>
+      <div class="code-block">
+        <div class="code-block__header"><span class="code-block__lang">bob prompt</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+        <div class="code-body">The Mermaid classDiagram fails to parse with this error: [paste error here]. Fix the syntax so it compiles without changing the diagram structure.</div>
+      </div>
+    </div>
+
+    <div class="nav-footer">
+      <a href="02-inspect-codebase.html" class="nav-btn">
+        <span class="nav-btn__dir">← Previous</span>
+        <span class="nav-btn__title">Inspect an unfamiliar codebase</span>
+      </a>
+      <a href="04-audit-code.html" class="nav-btn nav-btn--next">
+        <span class="nav-btn__dir">Next →</span>
+        <span class="nav-btn__title">Audit code and generate reports</span>
+      </a>
+    </div>
+  </main>
+</div>
+
+<footer>
+  IBM Bob IDE Tutorial Lab Guide &nbsp;·&nbsp; Tutorial 03 of 06
+  <br><span style="color:#c6c6c6;font-size:11px">Made with IBM Bob</span>
+</footer>
+
+<script>
+function copyCode(btn){
+  const code = btn.closest('.code-block').querySelector('.code-body').textContent;
+  navigator.clipboard.writeText(code.trim()).then(() => {
+    btn.textContent = 'Copied!'; btn.classList.add('copied');
+    setTimeout(() => { btn.textContent = 'Copy'; btn.classList.remove('copied'); }, 2000);
+  });
+}
+const links = document.querySelectorAll('.sidebar__link');
+const steps = document.querySelectorAll('.step[id]');
+window.addEventListener('scroll', () => {
+  const y = window.scrollY + 70;
+  let cur = steps[0];
+  steps.forEach(s => { if(s.offsetTop <= y) cur = s; });
+  links.forEach(l => { l.classList.remove('active'); if(l.getAttribute('href') === '#' + (cur && cur.id)) l.classList.add('active'); });
+});
+</script>
+</body>
+</html>

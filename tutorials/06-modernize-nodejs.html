@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>Tutorial 06 — Modernize a Node.js application | IBM Bob IDE Lab</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&family=IBM+Plex+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+<link rel="stylesheet" href="../assets/tutorial.css"/>
+<style>
+.diff-block{border:1px solid var(--code-border);border-radius:6px;overflow:hidden;margin:.75rem 0;font-family:'IBM Plex Mono',monospace;font-size:12px}
+.diff-block__header{padding:.4rem .75rem;background:#f0f3f6;border-bottom:1px solid var(--code-border);font-size:11px;font-weight:600;color:var(--text-secondary)}
+.diff-line{padding:.15rem .75rem;line-height:1.7}
+.diff-line--remove{background:#fff0f0;color:#cf222e}
+.diff-line--add{background:#f0fff4;color:#116329}
+.diff-line--neutral{color:var(--text-secondary)}
+.feature-pill{display:inline-block;padding:.15rem .55rem;border-radius:12px;font-size:11px;font-weight:600;margin:.1rem .15rem .1rem 0}
+.feature-pill--modes{background:#e8f0fe;color:#0f62fe}
+.feature-pill--context{background:#f0f8f1;color:#198038}
+.feature-pill--approval{background:#fdf6e3;color:#7d5a00}
+.feature-pill--literate{background:#f3e8ff;color:#6b21a8}
+</style>
+</head>
+<body>
+<header class="topbar">
+  <div class="topbar__brand">
+    <button class="menu-toggle" onclick="document.getElementById('sidebar').classList.toggle('open')" aria-label="Menu">&#9776;</button>
+    <div class="logo-dot"></div>
+    <div>
+      <div class="brand-kicker">IBM BOB</div>
+      <div class="brand-title">IDE Tutorial Lab Guide</div>
+    </div>
+  </div>
+  <div class="topbar__meta">
+    <a href="https://bob.ibm.com/docs/ide/tutorials/modernize-nodejs-express-api" class="topbar__link" target="_blank" rel="noopener">Official Docs ↗</a>
+  </div>
+</header>
+
+<div class="layout">
+  <nav class="sidebar" id="sidebar">
+    <a href="../index.html" class="sidebar__back">← Back to Lab Home</a>
+    <div class="sidebar__title">On This Page</div>
+    <div class="sidebar__nav">
+      <a href="#overview" class="sidebar__link active"><span class="sidebar__num">—</span> Overview</a>
+      <a href="#prereqs" class="sidebar__link"><span class="sidebar__num">—</span> Prerequisites</a>
+      <a href="#setup" class="sidebar__link"><span class="sidebar__num">01</span> Set up workspace</a>
+      <a href="#dockerfile" class="sidebar__link"><span class="sidebar__num">02</span> Create Dockerfile</a>
+      <a href="#verify-legacy" class="sidebar__link"><span class="sidebar__num">03</span> Verify legacy app</a>
+      <a href="#explore" class="sidebar__link"><span class="sidebar__num">04</span> Explore with Ask mode</a>
+      <a href="#modernize" class="sidebar__link"><span class="sidebar__num">05</span> Modernize the API</a>
+      <a href="#literate-coding" class="sidebar__link"><span class="sidebar__num">06</span> Literate coding</a>
+      <a href="#verify-modern" class="sidebar__link"><span class="sidebar__num">07</span> Verify &amp; test</a>
+    </div>
+  </nav>
+
+  <main class="content">
+    <div class="page-header">
+      <div class="page-kicker">Tutorial 06 · Modernization</div>
+      <h1>Modernize a Node.js application</h1>
+      <p class="page-lead">Learn to use IBM Bob for application modernization by upgrading a TypeScript Express API from Node.js 16 to 22. Try AI-assisted development with modes, approvals, and literate coding in this hands-on tutorial.</p>
+    </div>
+
+    <div class="step" id="overview">
+      <div class="step-num">Overview</div>
+      <h2>What you will learn</h2>
+      <p>In this tutorial, you modernize a TypeScript Express REST API from Node.js 16 to Node.js 22. You do not need experience in Node.js or TypeScript. You learn how Bob analyzes dependencies and modernizes code patterns.</p>
+      <p>Bob provides four essential capabilities you use throughout this upgrade:</p>
+      <div style="margin:.5rem 0 1rem">
+        <span class="feature-pill feature-pill--modes">Modes</span>
+        <span class="feature-pill feature-pill--context">Context mentions (@)</span>
+        <span class="feature-pill feature-pill--approval">Approval workflow</span>
+        <span class="feature-pill feature-pill--literate">Literate coding</span>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Feature</th><th>What it does in this tutorial</th></tr></thead>
+          <tbody>
+            <tr><td>Modes</td><td>Specialized personas (Ask, Agent) that tailor Bob's behavior for specific tasks</td></tr>
+            <tr><td>Context mentions</td><td>Reference specific project files (<code>@package.json</code>, <code>@tsconfig.json</code>, <code>@Dockerfile</code>) in your prompts</td></tr>
+            <tr><td>Approval workflow</td><td>Review every tool Bob plans to use before it executes — you stay in control</td></tr>
+            <tr><td>Literate coding</td><td>Write instructions in plain language directly in the editor; Bob generates the code change as a diff</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="step" id="prereqs">
+      <div class="step-num">Prerequisites</div>
+      <h2>What you need</h2>
+      <ul>
+        <li><strong>Docker</strong> installed and running on your workstation. You use Bob to create a Dockerfile for the application.</li>
+        <li><strong>IBM Bob IDE</strong> installed.</li>
+        <li>You have completed the <a href="https://bob.ibm.com/docs/ide/getting-started/quickstart" target="_blank" rel="noopener">Quickstart tutorial</a> to familiarize yourself with Bob's interface.</li>
+        <li>You may want to start a new context window for this tutorial.</li>
+      </ul>
+      <div class="callout callout--warning">
+        <div class="callout__label">Different repository</div>
+        <p>This tutorial uses a <strong>different repository</strong> from the other labs — the <code>bob-demo</code> repo, not Galaxium Travels. Clone it in the next step.</p>
+      </div>
+    </div>
+
+    <div class="step" id="setup">
+      <div class="step-num">Step 01</div>
+      <h2>Set up your workspace</h2>
+      <h3>Launch IBM Bob and open the Bob sidebar</h3>
+      <p>Launch the IBM Bob application. If the Bob sidebar is not already open, click the Bob icon beside the navigation bar or press <code>⌥⌘B</code> (Mac) / <code>Ctrl+Alt+B</code> (Windows).</p>
+      <h3>Clone the tutorial repository</h3>
+      <p>Clone the repository by clicking the <strong>files icon</strong> on the top left of the Bob IDE panel, then click <strong>Clone Repository</strong>, and paste the following URL:</p>
+      <div class="code-block">
+        <div class="code-block__header"><span class="code-block__lang">repository URL</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+        <div class="code-body">https://github.com/IBM/bob-demo.git</div>
+      </div>
+      <p>Bob asks where you want to save the repository. When prompted to open the cloned repository, click <strong>Open</strong>. If Bob asks <em>"Do you trust the authors?"</em>, click <strong>Yes, I trust the authors</strong>.</p>
+      <h3>Disable auto-approval</h3>
+      <p>Make sure auto-approval is turned <strong>off</strong> in <strong>Permissions</strong>. With auto-approval off, Bob asks for your permission before executing any proposed changes.</p>
+    </div>
+
+    <div class="step" id="dockerfile">
+      <div class="step-num">Step 02</div>
+      <h2>Build the containerized environment</h2>
+      <p>Create a Dockerfile to run the application in a containerized environment, eliminating the need to install Node.js or dependencies locally.</p>
+      <h3>Switch to Agent mode</h3>
+      <p>Switch Bob to <strong>Agent mode</strong> by clicking the mode dropdown and selecting <strong>Agent</strong>. Agent mode allows Bob to write, modify, and refactor code — while still asking for permission before each operation.</p>
+      <h3>Create the Dockerfile</h3>
+      <div class="code-block">
+        <div class="code-block__header"><span class="code-block__lang">bob prompt — Agent mode</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+        <div class="code-body">Create a Dockerfile for this Node.js TypeScript application. It should use Node 16 to match the current application version, build the TypeScript code, and run the app on port `3000`.</div>
+      </div>
+      <p>Bob requests read access to several files to understand the requirements. Click <strong>Approve</strong>. Bob determines the appropriate Dockerfile structure and shows you the proposed file. Click <strong>Save</strong> to create the file.</p>
+      <div class="callout callout--info">
+        <div class="callout__label">Note</div>
+        <p>You will update this Dockerfile later to use Node 22 once the modernization is complete.</p>
+      </div>
+    </div>
+
+    <div class="step" id="verify-legacy">
+      <div class="step-num">Step 03</div>
+      <h2>Verify the legacy application builds</h2>
+      <p>Before modernizing, verify that the legacy code builds and runs correctly. This baseline ensures you can identify any issues the modernization introduces.</p>
+      <div class="code-block">
+        <div class="code-block__header"><span class="code-block__lang">bob prompt — Agent mode</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+        <div class="code-body">Build and test the legacy application using Docker to verify it works correctly before modernization. The application should respond to API requests at /api/todos with sample data. After testing, clean up the container.</div>
+      </div>
+      <div class="callout callout--warning">
+        <div class="callout__label">Expected issue: missing package-lock.json</div>
+        <p>During the build phase, Bob tells you the build failed because the Dockerfile uses <code>npm ci</code>, which requires a <code>package-lock.json</code> file that doesn't exist. Bob detects this and proposes a fix: change <code>npm ci</code> to <code>npm install</code> in the Dockerfile. Approve the fix.</p>
+      </div>
+      <p>Once Bob applies the fix and finishes the build, it displays a summary confirming the legacy application works correctly. You now have a verified baseline.</p>
+    </div>
+
+    <div class="step" id="explore">
+      <div class="step-num">Step 04</div>
+      <h2>Explore the Node.js codebase with Ask mode</h2>
+      <p>Switch to <strong>Ask mode</strong> — it can only read files, so you can safely explore code without accidentally making changes. Use <code>@</code> context mentions to point Bob at specific files.</p>
+
+      <h3>Analyze package.json</h3>
+      <div class="code-block">
+        <div class="code-block__header"><span class="code-block__lang">bob prompt — Ask mode</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+        <div class="code-body">@package.json What Node.js version is this project using? What dependencies would need updating for Node.js 22? Give me a short summary.</div>
+      </div>
+      <p>Bob identifies needed updates: <code>@types/node</code> (^16 → ^22), <code>typescript</code> (^4 → ^5). Express and UUID are already compatible with Node 22.</p>
+
+      <h3>Analyze tsconfig.json</h3>
+      <div class="code-block">
+        <div class="code-block__header"><span class="code-block__lang">bob prompt — Ask mode</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+        <div class="code-body">@tsconfig.json What module system and compiler settings is this TypeScript project using? What settings would need updating for Node.js 22? Give me a short summary.</div>
+      </div>
+      <p>Bob recommends updating <code>target</code> (ES2020 → ES2022+), <code>lib</code>, and considering <code>moduleResolution: "node16"</code> for native ESM support.</p>
+
+      <h3>Analyze the Dockerfile</h3>
+      <div class="code-block">
+        <div class="code-block__header"><span class="code-block__lang">bob prompt — Ask mode</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+        <div class="code-body">@Dockerfile What Node.js version does this Dockerfile use? What would need to change for Node.js 22? Give me a short summary.</div>
+      </div>
+      <p>Bob identifies that <code>node:16-alpine</code> needs to change to <code>node:22-alpine</code> in both the builder and runtime stages — and that both must be updated in sync to avoid subtle runtime errors.</p>
+    </div>
+
+    <div class="step" id="modernize">
+      <div class="step-num">Step 05</div>
+      <h2>Modernize the API with Agent mode</h2>
+      <p>Switch back to <strong>Agent mode</strong>. Bob determined the following modernization requirements:</p>
+      <ul class="checklist">
+        <li>Change Node.js 16 to Node.js 22 in <code>package.json</code> and <code>Dockerfile</code></li>
+        <li>Update the TypeScript compiler target and module settings in <code>tsconfig.json</code></li>
+        <li>Fix outdated dependency versions</li>
+      </ul>
+      <div class="code-block">
+        <div class="code-block__header"><span class="code-block__lang">bob prompt — Agent mode</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+        <div class="code-body">@package.json @tsconfig.json @Dockerfile Modernize this Express API from Node.js 16 to Node.js 22. Keep the API functionality identical - this is a platform upgrade, not a feature change. Give me a short summary.</div>
+      </div>
+      <p>After Bob finishes, it displays a summary of all changes made:</p>
+      <div class="diff-block">
+        <div class="diff-block__header">Changes applied across three files</div>
+        <div class="diff-line diff-line--neutral">Dockerfile — 2 lines changed</div>
+        <div class="diff-line diff-line--remove">  FROM node:16-alpine AS builder</div>
+        <div class="diff-line diff-line--add">  FROM node:22-alpine AS builder</div>
+        <div class="diff-line diff-line--neutral">package.json — 3 fields changed</div>
+        <div class="diff-line diff-line--remove">  "node": "16.x" / "@types/node": "^16.18.0" / "typescript": "^4.9.5"</div>
+        <div class="diff-line diff-line--add">  "node": "22.x" / "@types/node": "^22.0.0" / "typescript": "^5.0.0"</div>
+        <div class="diff-line diff-line--neutral">tsconfig.json — 4 settings changed</div>
+        <div class="diff-line diff-line--remove">  target: ES2020 / lib: ["ES2020"] / module: commonjs / moduleResolution: node</div>
+        <div class="diff-line diff-line--add">  target: ES2023 / lib: ["ES2023"] / module: node16 / moduleResolution: node16</div>
+      </div>
+      <div class="callout callout--info">
+        <div class="callout__label">TypeScript 5 gotcha</div>
+        <p>TypeScript 5 enforces that <code>module</code> and <code>moduleResolution</code> must be set consistently. <code>moduleResolution: "node16"</code> requires <code>module: "node16"</code>. The compiled output is still CommonJS-compatible; this only affects how TypeScript resolves imports during type-checking.</p>
+      </div>
+    </div>
+
+    <div class="step" id="literate-coding">
+      <div class="step-num">Step 06</div>
+      <h2>Mark the modernization complete with literate coding</h2>
+      <p>Use Bob's <strong>literate coding</strong> feature to update the sample todo title, marking the app as modernized. Literate coding lets you write instructions in plain language directly in your editor instead of using the chat interface.</p>
+
+      <h3>Enable literate coding mode</h3>
+      <ol>
+        <li>In the Explorer tab, navigate to the <code>express-todo-api</code> folder and open <code>src/db.ts</code>.</li>
+        <li>Toggle literate coding mode by clicking the <strong>magic wand icon</strong> in the editor toolbar, or press <code>⌘I</code> (Mac) / <code>Ctrl+I</code> (Windows/Linux).</li>
+      </ol>
+
+      <h3>Write your instruction</h3>
+      <p>In the <code>src/db.ts</code> file, paste the following instruction at the top of the file, before any code:</p>
+      <div class="code-block">
+        <div class="code-block__header"><span class="code-block__lang">literate coding instruction — top of src/db.ts</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+        <div class="code-body">// Find the sample todo object's title property and change it to "Welcome to the Modernized Node.js 22 API"</div>
+      </div>
+      <p>Bob understands this comment is an instruction (not regular code) because you are in literate coding mode. Your instruction appears highlighted in the editor.</p>
+
+      <h3>Generate and accept the changes</h3>
+      <ol>
+        <li>Click <strong>Generate</strong> at the bottom of the document. Bob locates the <code>sampleTodo</code> object and shows you the diff.</li>
+        <li>Review the change: title changes from <em>"Learn Node.js modernization"</em> to <em>"Welcome to the Modernized Node.js 22 API"</em>.</li>
+        <li>Click <strong>Accept all</strong> to apply the change.</li>
+        <li>Click <strong>Exit</strong> under the literate coding wand to exit literate coding mode.</li>
+      </ol>
+    </div>
+
+    <div class="step" id="verify-modern">
+      <div class="step-num">Step 07</div>
+      <h2>Verify the modernized application with Docker</h2>
+      <p>Switch back to <strong>Agent mode</strong> and verify the modernized application works correctly by rebuilding and testing the Docker container.</p>
+      <div class="code-block">
+        <div class="code-block__header"><span class="code-block__lang">bob prompt — Agent mode</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+        <div class="code-body">Verify the modernized Node.js 22 application works by building and testing it with Docker. Check that the API responds at /api/todos and shows the updated todo title. Clean up when done. Give me a short summary. I also want to see the validation of the new title.</div>
+      </div>
+      <p>Once Bob verifies the application, it gives you a summary similar to:</p>
+      <div class="callout callout--success">
+        <div class="callout__label">Expected verification output</div>
+        <p>✅ Docker image built successfully with Node.js 22<br/>
+        ✅ TypeScript compilation completed without errors<br/>
+        ✅ API endpoint <code>/api/todos</code> responds successfully<br/>
+        ✅ Updated todo title displays: <em>"Welcome to the Modernized Node.js 22 API"</em><br/>
+        ✅ Cleanup completed (container and image removed)</p>
+      </div>
+      <p>The API works correctly and the title is updated — confirming that Bob preserved existing behavior while modernizing the Node.js version and all dependencies.</p>
+
+      <h3>What you accomplished</h3>
+      <p>In this tutorial you used four of Bob's core capabilities together:</p>
+      <ul class="checklist">
+        <li><strong>Agent mode</strong> — created the Dockerfile, verified the legacy build, and applied modernization changes.</li>
+        <li><strong>Ask mode</strong> — safely analyzed all three config files using <code>@</code> context mentions before making any changes.</li>
+        <li><strong>Approval workflow</strong> — reviewed and approved every file write and command execution step by step.</li>
+        <li><strong>Literate coding</strong> — made a targeted in-editor change with a plain-language instruction, reviewed the diff, and accepted.</li>
+      </ul>
+    </div>
+
+    <div class="nav-footer">
+      <a href="05-plan-and-implement.html" class="nav-btn">
+        <span class="nav-btn__dir">← Previous</span>
+        <span class="nav-btn__title">Plan and implement complex features</span>
+      </a>
+      <a href="../index.html" class="nav-btn nav-btn--next">
+        <span class="nav-btn__dir">↩ Back to</span>
+        <span class="nav-btn__title">Lab Home</span>
+      </a>
+    </div>
+  </main>
+</div>
+
+<footer>
+  IBM Bob IDE Tutorial Lab Guide &nbsp;·&nbsp; Tutorial 06 of 06
+  <br><span style="color:#c6c6c6;font-size:11px">Made with IBM Bob</span>
+</footer>
+
+<script>
+function copyCode(btn){
+  const code = btn.closest('.code-block').querySelector('.code-body').textContent;
+  navigator.clipboard.writeText(code.trim()).then(() => {
+    btn.textContent = 'Copied!'; btn.classList.add('copied');
+    setTimeout(() => { btn.textContent = 'Copy'; btn.classList.remove('copied'); }, 2000);
+  });
+}
+const links = document.querySelectorAll('.sidebar__link');
+const steps = document.querySelectorAll('.step[id]');
+window.addEventListener('scroll', () => {
+  const y = window.scrollY + 70;
+  let cur = steps[0];
+  steps.forEach(s => { if(s.offsetTop <= y) cur = s; });
+  links.forEach(l => { l.classList.remove('active'); if(l.getAttribute('href') === '#' + (cur && cur.id)) l.classList.add('active'); });
+});
+</script>
+</body>
+</html>
