@@ -33,6 +33,7 @@
       <a href="#run-init" class="sidebar__link"><span class="sidebar__num">01</span> Run /init</a>
       <a href="#explore-agents" class="sidebar__link"><span class="sidebar__num">02</span> Explore AGENTS.md</a>
       <a href="#next-steps" class="sidebar__link"><span class="sidebar__num">—</span> Next Steps</a>
+      <a href="#business-value" class="sidebar__link"><span class="sidebar__num">—</span> Business Value</a>
     </div>
   </nav>
 
@@ -118,6 +119,39 @@
         <li>The mode-specific AGENTS.md files provide targeted context for Agent, Plan, and Ask modes.</li>
         <li>Re-run <code>/init</code> after major project changes to keep the context current.</li>
       </ul>
+    </div>
+
+    <div class="step" id="business-value">
+      <div class="step-num">Business Value</div>
+      <h2>Traditional approach vs. IBM Bob</h2>
+      <p>Setting up persistent project context is often treated as optional, but without it every developer and AI interaction restarts from scratch.</p>
+      <div class="bv-grid">
+        <div class="bv-card bv-card--traditional">
+          <div class="bv-card__header">Traditional approach</div>
+          <div class="bv-card__body">
+            <ul>
+              <li>Developer manually reads README, directory tree, and key source files to build mental model</li>
+              <li>Context is held in one person's head — lost when they leave the conversation or the team</li>
+              <li>Every new team member repeats the same onboarding from scratch</li>
+              <li>AI prompts must re-explain the project structure every session</li>
+            </ul>
+            <div class="bv-time">2–4 hours per developer, repeated per session</div>
+          </div>
+        </div>
+        <div class="bv-card bv-card--bob">
+          <div class="bv-card__header">With IBM Bob</div>
+          <div class="bv-card__body">
+            <ul>
+              <li>Run <code>/init</code> once — Bob reads the project and writes AGENTS.md automatically</li>
+              <li>Context is version-controlled, shared with the whole team, and available to Bob instantly</li>
+              <li>New contributors open the repo and Bob already knows the architecture</li>
+              <li>Re-run after major changes to keep context current — takes under a minute</li>
+            </ul>
+            <div class="bv-time">Under 2 minutes, once per project</div>
+          </div>
+        </div>
+      </div>
+      <div class="bv-saving">Time saved: up to 4 hours of manual onboarding per developer, every session. <span>Context is written once, reused forever.</span></div>
     </div>
 
     <div class="nav-footer">

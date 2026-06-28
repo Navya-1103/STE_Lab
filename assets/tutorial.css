@@ -67,3 +67,22 @@ td code{font-family:'IBM Plex Mono',monospace;font-size:12px;background:var(--co
 @media(max-width:768px){.sidebar{transform:translateX(-100%)}.sidebar.open{transform:translateX(0)}.content{margin-left:0;padding:1.25rem}}
 footer{margin-left:var(--sidebar-width);padding:1.5rem 2rem;border-top:1px solid var(--border);font-size:12px;color:var(--text-muted);text-align:center}
 @media(max-width:768px){footer{margin-left:0}}
+
+/* ── Business Value comparison section ─────────────────────────────── */
+.bv-section{margin-top:.25rem}
+.bv-grid{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin:1rem 0}
+@media(max-width:640px){.bv-grid{grid-template-columns:1fr}}
+.bv-card{border:1px solid var(--border);border-radius:4px;overflow:hidden}
+.bv-card__header{padding:.55rem .85rem;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.09em}
+.bv-card--traditional .bv-card__header{background:#fdf6e3;color:#7d5a00;border-bottom:1px solid #f1d98a}
+.bv-card--bob .bv-card__header{background:#e8f0fe;color:#0043ce;border-bottom:1px solid #b8cef9}
+.bv-card__body{padding:.85rem 1rem;background:var(--bg)}
+.bv-card__body ul{list-style:none;padding:0;margin:0}
+.bv-card__body li{font-size:13px;color:var(--text-secondary);padding:.25rem 0 .25rem 1.3rem;position:relative;line-height:1.5}
+.bv-card--traditional .bv-card__body li::before{content:'—';position:absolute;left:0;color:var(--text-muted)}
+.bv-card--bob .bv-card__body li::before{content:'✓';position:absolute;left:0;color:var(--success);font-weight:700}
+.bv-time{display:inline-block;margin-top:.6rem;padding:.25rem .65rem;border-radius:3px;font-size:12px;font-weight:600;font-family:'IBM Plex Mono',monospace}
+.bv-card--traditional .bv-time{background:#fdf6e3;color:#7d5a00;border:1px solid #f1d98a}
+.bv-card--bob .bv-time{background:#f0f8f1;color:#198038;border:1px solid #a7d7b0}
+.bv-saving{margin:.75rem 0 0;padding:.7rem 1rem;background:#f0f8f1;border:1px solid #a7d7b0;border-radius:4px;font-size:13px;color:#198038;font-weight:600}
+.bv-saving span{font-weight:400;color:var(--text-secondary)}

@@ -51,6 +51,7 @@
       <a href="#modernize" class="sidebar__link"><span class="sidebar__num">05</span> Modernize the API</a>
       <a href="#literate-coding" class="sidebar__link"><span class="sidebar__num">06</span> Literate coding</a>
       <a href="#verify-modern" class="sidebar__link"><span class="sidebar__num">07</span> Verify &amp; test</a>
+      <a href="#business-value" class="sidebar__link"><span class="sidebar__num">—</span> Business Value</a>
     </div>
   </nav>
 
@@ -263,6 +264,39 @@
         <li><strong>Approval workflow</strong> — reviewed and approved every file write and command execution step by step.</li>
         <li><strong>Literate coding</strong> — made a targeted in-editor change with a plain-language instruction, reviewed the diff, and accepted.</li>
       </ul>
+    </div>
+
+    <div class="step" id="business-value">
+      <div class="step-num">Business Value</div>
+      <h2>Traditional approach vs. IBM Bob</h2>
+      <p>Upgrading runtime versions is routine maintenance that is routinely deferred — because the research, dependency analysis, and testing effort is disproportionate to the perceived value.</p>
+      <div class="bv-grid">
+        <div class="bv-card bv-card--traditional">
+          <div class="bv-card__header">Traditional approach</div>
+          <div class="bv-card__body">
+            <ul>
+              <li>Developer manually reads Node.js migration guides and changelog for breaking changes</li>
+              <li>Dependency compatibility checked one package at a time against release notes</li>
+              <li>TypeScript config changes require research — easy to introduce subtle module resolution bugs</li>
+              <li>Upgrade deferred until forced by end-of-life — making the eventual jump riskier</li>
+            </ul>
+            <div class="bv-time">1–3 days of research and manual testing per major version upgrade</div>
+          </div>
+        </div>
+        <div class="bv-card bv-card--bob">
+          <div class="bv-card__header">With IBM Bob</div>
+          <div class="bv-card__body">
+            <ul>
+              <li>Ask mode reads <code>package.json</code>, <code>tsconfig.json</code>, and <code>Dockerfile</code> and produces a precise upgrade plan in seconds</li>
+              <li>Agent mode applies all changes across all config files consistently in a single operation</li>
+              <li>Literate coding lets you make in-editor changes with plain-language instructions and review the diff before accepting</li>
+              <li>Docker verification confirms the modernized app works before any commit is made</li>
+            </ul>
+            <div class="bv-time">Under 30 minutes from legacy to verified Node 22</div>
+          </div>
+        </div>
+      </div>
+      <div class="bv-saving">Time saved: up to 3 days of upgrade research and manual testing. <span>Upgrades become routine tasks instead of deferred risks.</span></div>
     </div>
 
     <div class="nav-footer">

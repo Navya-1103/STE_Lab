@@ -44,6 +44,7 @@
       <a href="#iterate" class="sidebar__link"><span class="sidebar__num">05</span> Iterate on the plan</a>
       <a href="#implement" class="sidebar__link"><span class="sidebar__num">06</span> Implement the feature</a>
       <a href="#run" class="sidebar__link"><span class="sidebar__num">07</span> Run the application</a>
+      <a href="#business-value" class="sidebar__link"><span class="sidebar__num">—</span> Business Value</a>
     </div>
   </nav>
 
@@ -245,6 +246,39 @@ npm install</div>
         <div class="callout__label">Done</div>
         <p>The seat class feature is live. Users can now choose Economy, Business, or Galaxium class when booking a flight, and the selection is persisted and displayed throughout the booking flow.</p>
       </div>
+    </div>
+
+    <div class="step" id="business-value">
+      <div class="step-num">Business Value</div>
+      <h2>Traditional approach vs. IBM Bob</h2>
+      <p>Complex features touching multiple layers — UI, API, and database — require careful coordination. Without a structured plan, assumptions accumulate and rework is expensive.</p>
+      <div class="bv-grid">
+        <div class="bv-card bv-card--traditional">
+          <div class="bv-card__header">Traditional approach</div>
+          <div class="bv-card__body">
+            <ul>
+              <li>Developer writes a feature branch directly from a ticket with minimal specification</li>
+              <li>Scope creep and missed layers discovered during code review — costly to unwind</li>
+              <li>Design discussions happen in Slack threads or meetings — context lost, not version-controlled</li>
+              <li>Cross-layer coordination (UI + API + DB) relies on verbal handoffs between specialists</li>
+            </ul>
+            <div class="bv-time">1–2 days of back-and-forth before code is even written</div>
+          </div>
+        </div>
+        <div class="bv-card bv-card--bob">
+          <div class="bv-card__header">With IBM Bob</div>
+          <div class="bv-card__body">
+            <ul>
+              <li>Plan mode generates a precise, reviewable spec in minutes from a structured prompt</li>
+              <li>Every layer (UI, API, DB) is named explicitly in the plan before a single line is written</li>
+              <li>Plans are Markdown files committed to the repo — reviewable, diffable, and traceable</li>
+              <li>Agent mode implements from the approved plan in a clean context, keeping scope tight</li>
+            </ul>
+            <div class="bv-time">Under 1 hour from prompt to working feature</div>
+          </div>
+        </div>
+      </div>
+      <div class="bv-saving">Time saved: 1–2 days of planning overhead and rework per complex feature. <span>The plan is the spec — review it before any code is written, not after.</span></div>
     </div>
 
     <div class="nav-footer">

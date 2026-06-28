@@ -37,6 +37,7 @@
       <a href="#use-case" class="sidebar__link"><span class="sidebar__num">04</span> Use case diagram</a>
       <a href="#save-diagrams" class="sidebar__link"><span class="sidebar__num">05</span> Save to repository</a>
       <a href="#troubleshooting" class="sidebar__link"><span class="sidebar__num">—</span> Troubleshooting</a>
+      <a href="#business-value" class="sidebar__link"><span class="sidebar__num">—</span> Business Value</a>
     </div>
   </nav>
 
@@ -214,6 +215,39 @@ Each file should have a short title heading, the Mermaid code block we generated
         <div class="code-block__header"><span class="code-block__lang">bob prompt</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
         <div class="code-body">The Mermaid classDiagram fails to parse with this error: [paste error here]. Fix the syntax so it compiles without changing the diagram structure.</div>
       </div>
+    </div>
+
+    <div class="step" id="business-value">
+      <div class="step-num">Business Value</div>
+      <h2>Traditional approach vs. IBM Bob</h2>
+      <p>Architecture diagrams are critical for alignment, onboarding, and change planning — but in most teams they are either missing, outdated, or locked in a slide deck no one can find.</p>
+      <div class="bv-grid">
+        <div class="bv-card bv-card--traditional">
+          <div class="bv-card__header">Traditional approach</div>
+          <div class="bv-card__body">
+            <ul>
+              <li>Architect spends 2–4 hours manually tracing the codebase and drawing diagrams in Visio or Lucidchart</li>
+              <li>Diagrams drift from the codebase within weeks and are rarely updated</li>
+              <li>Each diagram type (class, sequence, use case) requires separate manual effort</li>
+              <li>Diagrams live in external tools — not version-controlled alongside the code</li>
+            </ul>
+            <div class="bv-time">Half a day per diagram type, plus ongoing maintenance</div>
+          </div>
+        </div>
+        <div class="bv-card bv-card--bob">
+          <div class="bv-card__header">With IBM Bob</div>
+          <div class="bv-card__body">
+            <ul>
+              <li>Bob reads the source files and generates all three diagram types in a single session</li>
+              <li>Diagrams are committed as Markdown files — rendered natively on GitHub, always alongside the code</li>
+              <li>Regenerate any diagram after a sprint's changes in under 5 minutes</li>
+              <li>No external tooling, no licenses, no drift</li>
+            </ul>
+            <div class="bv-time">Under 15 minutes for all three diagrams</div>
+          </div>
+        </div>
+      </div>
+      <div class="bv-saving">Time saved: a full day of manual diagramming work per sprint cycle. <span>Diagrams stay current because regenerating them costs almost nothing.</span></div>
     </div>
 
     <div class="nav-footer">

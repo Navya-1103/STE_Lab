@@ -41,6 +41,7 @@
       <a href="#deployment" class="sidebar__link"><span class="sidebar__num">08</span> Deployment model</a>
       <a href="#save" class="sidebar__link"><span class="sidebar__num">09</span> Save findings</a>
       <a href="#troubleshooting" class="sidebar__link"><span class="sidebar__num">—</span> Troubleshooting</a>
+      <a href="#business-value" class="sidebar__link"><span class="sidebar__num">—</span> Business Value</a>
     </div>
   </nav>
 
@@ -274,6 +275,41 @@ Populate each section with everything you discovered in this session. Use clear 
 
       <h3>/init generates an empty or incorrect AGENTS.md</h3>
       <p>Confirm that <code>galaxium-travels/</code> (not a subdirectory) is open as the workspace root. All three service directories must be visible at the top level. If the root lacks a README.md, add one and rerun <code>/init</code>.</p>
+    </div>
+
+    <div class="step" id="business-value">
+      <div class="step-num">Business Value</div>
+      <h2>Traditional approach vs. IBM Bob</h2>
+      <p>Onboarding to an unfamiliar codebase is one of the most expensive hidden costs in software teams. The time spent reading documentation, asking colleagues, and piecing together architecture adds up fast.</p>
+      <div class="bv-grid">
+        <div class="bv-card bv-card--traditional">
+          <div class="bv-card__header">Traditional approach</div>
+          <div class="bv-card__body">
+            <ul>
+              <li>Read README, wikis, and Confluence pages — often outdated or incomplete</li>
+              <li>Schedule multiple meetings with senior developers to understand architecture</li>
+              <li>Manually trace code paths across services to understand component interactions</li>
+              <li>Write your own notes — not shared, not updated, not machine-readable</li>
+              <li>New joiner still has gaps after 1–2 weeks</li>
+            </ul>
+            <div class="bv-time">1–2 weeks to reach productivity</div>
+          </div>
+        </div>
+        <div class="bv-card bv-card--bob">
+          <div class="bv-card__header">With IBM Bob</div>
+          <div class="bv-card__body">
+            <ul>
+              <li>Bob reads all services, entry points, and tests in minutes — no meetings needed</li>
+              <li>Produces a structured analysis: purpose, tech stack, components, test coverage, and deployment model</li>
+              <li>Saves a <code>docs/ONBOARDING.md</code> with diagrams that the whole team can use</li>
+              <li>Document stays in version control — updated on demand rather than abandoned</li>
+              <li>Any new joiner can be productive in a single session</li>
+            </ul>
+            <div class="bv-time">Under 30 minutes, end to end</div>
+          </div>
+        </div>
+      </div>
+      <div class="bv-saving">Time saved: days of manual investigation compressed into a single AI-guided session. <span>Every future joiner benefits from the same artifact without redoing the work.</span></div>
     </div>
 
     <div class="nav-footer">
