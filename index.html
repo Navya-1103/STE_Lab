@@ -243,7 +243,7 @@ footer{margin-left:var(--sidebar-width);padding:1.5rem 2rem;border-top:1px solid
     <section class="section" id="prerequisites">
       <div class="section-kicker">Before You Begin</div>
       <div class="section-header"><h2>Prerequisites</h2></div>
-      <p class="section-lead">Install and configure all required tools before starting any tutorial. Each tutorial lists its own specific requirements, but the items below are needed for the full series.</p>
+      <p class="section-lead">You do not need to run the Galaxium Travels application locally — Bob reads source files directly. Only three tools are needed to complete all six tutorials.</p>
 
       <!-- Required software -->
       <div class="subsection">
@@ -253,8 +253,9 @@ footer{margin-left:var(--sidebar-width);padding:1.5rem 2rem;border-top:1px solid
             <div class="prereq-icon prereq-icon--blue">🤖</div>
             <div>
               <h4>IBM Bob IDE</h4>
-              <p>Bob is a standalone IDE application — not a plugin or extension. Download and install v2.x or later from the official site. You need an <strong>IBMid</strong> to sign in on first launch.</p>
+              <p>Bob is a standalone IDE — not a plugin or extension. Download and install v2.x or later from the official site. You need an <strong>IBMid</strong> to sign in on first launch.</p>
               <p style="margin-top:.4rem"><a href="https://bob.ibm.com" target="_blank" rel="noopener" style="color:var(--primary);font-weight:500;font-size:12px">Download Bob IDE ↗</a></p>
+              <p style="margin-top:.3rem;font-size:11px;color:var(--text-secondary)">Required for all tutorials (T1–T6)</p>
             </div>
           </div>
           <div class="prereq-card">
@@ -263,38 +264,16 @@ footer{margin-left:var(--sidebar-width);padding:1.5rem 2rem;border-top:1px solid
               <h4>Git</h4>
               <p>Required to clone the Galaxium Travels demo repository. Verify your installation:</p>
               <p><code>git --version</code></p>
+              <p style="margin-top:.3rem;font-size:11px;color:var(--text-secondary)">Required for all tutorials (T1–T6)</p>
             </div>
           </div>
           <div class="prereq-card">
             <div class="prereq-icon prereq-icon--yellow">🐳</div>
             <div>
               <h4>Docker Desktop</h4>
-              <p>Required for the <em>Modernize Node.js</em> tutorial to build and test the containerized application.</p>
+              <p>Bob instructs Docker to build and run the Node.js container — no local Node.js or npm needed. Verify:</p>
               <p><code>docker --version</code></p>
-            </div>
-          </div>
-          <div class="prereq-card">
-            <div class="prereq-icon prereq-icon--blue">🐍</div>
-            <div>
-              <h4>Python 3.x</h4>
-              <p>Required to run the Galaxium Travels back end (FastAPI). Check your version:</p>
-              <p><code>python3 --version</code></p>
-            </div>
-          </div>
-          <div class="prereq-card">
-            <div class="prereq-icon prereq-icon--green">📦</div>
-            <div>
-              <h4>Node.js 22 + npm</h4>
-              <p>Required for the front end and the Node.js modernization tutorial. Verify:</p>
-              <p><code>node --version &amp;&amp; npm --version</code></p>
-            </div>
-          </div>
-          <div class="prereq-card">
-            <div class="prereq-icon prereq-icon--purple">☕</div>
-            <div>
-              <h4>Java 17+ &amp; Maven 3.6+</h4>
-              <p>Required to build the Galaxium Travels Java inventory hold service.</p>
-              <p><code>java -version</code><br/><code>mvn -version</code></p>
+              <p style="margin-top:.3rem;font-size:11px;color:var(--text-secondary)">Required for T6 (Modernize Node.js) only</p>
             </div>
           </div>
         </div>
