@@ -1,0 +1,399 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>IBM Bob IDE — Tutorial Lab Guide</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&family=IBM+Plex+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --primary:#0f62fe;--primary-hover:#0353e9;
+  --success:#198038;--warning:#f1c21b;--danger:#da1e28;
+  --bg:#fff;--bg-alt:#f4f4f4;
+  --text:#161616;--text-secondary:#525252;--text-muted:#a8a8a8;
+  --border:#e0e0e0;--code-bg:#f6f8fa;--code-border:#d0d7de;
+  --sidebar-width:280px;--header-height:48px;
+}
+body{font-family:'IBM Plex Sans',sans-serif;font-size:14px;line-height:1.6;color:var(--text);background:var(--bg)}
+
+/* TOPBAR */
+.topbar{position:fixed;top:0;left:0;right:0;height:var(--header-height);background:#161616;color:#fff;display:flex;align-items:center;justify-content:space-between;padding:0 1rem;z-index:100;box-shadow:0 2px 6px rgba(0,0,0,.3)}
+.topbar__brand{display:flex;align-items:center;gap:.75rem}
+.menu-toggle{background:none;border:none;color:#fff;font-size:1.25rem;cursor:pointer;padding:.25rem .5rem;border-radius:4px;line-height:1}
+.menu-toggle:hover{background:rgba(255,255,255,.1)}
+.logo-dot{width:10px;height:10px;background:var(--primary);border-radius:50%;flex-shrink:0}
+.brand-kicker{font-size:10px;font-weight:600;letter-spacing:.12em;color:#a8a8a8;text-transform:uppercase}
+.brand-title{font-size:13px;font-weight:500;color:#fff}
+.topbar__meta{display:flex;align-items:center;gap:.5rem}
+.topbar__link{color:#c6c6c6;font-size:12px;text-decoration:none}
+.topbar__link:hover{color:#fff}
+
+/* LAYOUT */
+.layout{display:flex;padding-top:var(--header-height);min-height:100vh}
+
+/* SIDEBAR */
+.sidebar{width:var(--sidebar-width);flex-shrink:0;background:#f4f4f4;border-right:1px solid var(--border);position:fixed;top:var(--header-height);left:0;bottom:0;overflow-y:auto;transition:transform .2s ease;z-index:90}
+.sidebar__title{padding:1rem;font-size:11px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--text-secondary);border-bottom:1px solid var(--border)}
+.sidebar__nav{display:flex;flex-direction:column;padding:.5rem 0}
+.sidebar__link{display:flex;align-items:center;gap:.5rem;padding:.6rem 1rem;text-decoration:none;color:var(--text-secondary);font-size:13px;font-weight:400;border-left:3px solid transparent;transition:all .15s}
+.sidebar__link:hover{background:#e8e8e8;color:var(--text)}
+.sidebar__link.active{color:var(--primary);border-left-color:var(--primary);background:#e8f0fe;font-weight:500}
+.sidebar__num{font-size:11px;font-weight:600;color:var(--text-secondary);font-family:'IBM Plex Mono',monospace;min-width:22px}
+
+/* CONTENT */
+.content{margin-left:var(--sidebar-width);flex:1;padding:2rem;max-width:960px}
+
+/* SECTION */
+.section{padding:2rem 0;border-bottom:1px solid var(--border)}
+.section:last-child{border-bottom:none}
+.section-kicker{font-size:11px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--primary);margin-bottom:.25rem}
+.section-header h2{font-size:1.75rem;font-weight:600;color:var(--text);margin-bottom:.75rem}
+.section-lead{font-size:15px;color:var(--text-secondary);max-width:720px;line-height:1.7;margin-bottom:.75rem}
+
+/* HERO */
+.hero{background:#161616;color:#fff;padding:3rem 2rem 2.5rem;border-radius:4px;margin-bottom:2rem}
+.hero__kicker{font-size:11px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:#a8a8a8;margin-bottom:.5rem}
+.hero__title{font-size:2rem;font-weight:600;margin-bottom:.75rem;line-height:1.3}
+.hero__title span{color:var(--primary)}
+.hero__lead{font-size:15px;color:#c6c6c6;max-width:620px;line-height:1.7;margin-bottom:1.5rem}
+.hero__actions{display:flex;gap:.75rem;flex-wrap:wrap}
+.btn{display:inline-block;padding:.6rem 1.2rem;font-size:13px;font-weight:500;border-radius:2px;text-decoration:none;cursor:pointer;border:none;transition:all .15s}
+.btn--primary{background:var(--primary);color:#fff}
+.btn--primary:hover{background:var(--primary-hover);color:#fff}
+.btn--ghost{background:transparent;color:#c6c6c6;border:1px solid #525252}
+.btn--ghost:hover{background:rgba(255,255,255,.1);color:#fff}
+
+/* GRID */
+.grid{display:grid;gap:1rem}
+.grid--2{grid-template-columns:repeat(auto-fit,minmax(260px,1fr))}
+.grid--3{grid-template-columns:repeat(auto-fit,minmax(220px,1fr))}
+
+/* FEATURE CARDS */
+.feature-card{background:var(--bg-alt);border:1px solid var(--border);border-radius:4px;padding:1.25rem}
+.feature-card h3{font-size:14px;font-weight:600;margin-bottom:.5rem;color:var(--text)}
+.feature-card p{font-size:13px;color:var(--text-secondary);line-height:1.6}
+
+/* TUTORIAL CARDS */
+.tutorial-card{background:#fff;border:1px solid var(--border);border-radius:4px;padding:1.25rem;text-decoration:none;color:inherit;display:block;transition:all .15s;position:relative}
+.tutorial-card:hover{border-color:var(--primary);background:#f0f5ff}
+.tutorial-card__num{font-size:10px;font-weight:700;letter-spacing:.1em;color:var(--text-muted);font-family:'IBM Plex Mono',monospace;text-transform:uppercase;margin-bottom:.4rem}
+.tutorial-card__title{font-size:14px;font-weight:600;color:var(--text);margin-bottom:.4rem}
+.tutorial-card__desc{font-size:12px;color:var(--text-secondary);line-height:1.5}
+.tutorial-card__arrow{position:absolute;top:1.25rem;right:1.25rem;color:var(--primary);font-size:16px}
+
+/* TABLE */
+.arch-table{width:100%;border-collapse:collapse;margin:.75rem 0}
+.arch-table th{text-align:left;font-size:12px;font-weight:600;color:var(--text-secondary);text-transform:uppercase;letter-spacing:.06em;padding:.5rem .75rem;border-bottom:2px solid var(--border)}
+.arch-table td{font-size:13px;padding:.5rem .75rem;border-bottom:1px solid var(--border);color:var(--text-secondary)}
+.arch-table td:first-child{font-weight:500;color:var(--text)}
+.arch-table code{font-family:'IBM Plex Mono',monospace;font-size:12px;background:var(--code-bg);padding:1px 4px;border-radius:3px}
+
+/* CODE BLOCK */
+.code-block{border:1px solid var(--code-border);border-radius:6px;overflow:hidden;margin:.75rem 0}
+.code-block__header{display:flex;align-items:center;justify-content:space-between;padding:.4rem .75rem;background:#f0f3f6;border-bottom:1px solid var(--code-border)}
+.code-block__lang{font-size:11px;font-weight:600;color:var(--text-secondary);font-family:'IBM Plex Mono',monospace}
+.copy-btn{font-size:11px;font-weight:600;padding:.15rem .5rem;background:#fff;border:1px solid var(--code-border);border-radius:3px;cursor:pointer;color:var(--text-secondary);transition:all .15s}
+.copy-btn:hover{background:var(--primary);color:#fff;border-color:var(--primary)}
+.copy-btn.copied{background:var(--success);color:#fff;border-color:var(--success)}
+.code-body{padding:.75rem;font-family:'IBM Plex Mono',monospace;font-size:12px;line-height:1.6;white-space:pre-wrap;background:var(--code-bg);color:var(--text);overflow-x:auto}
+
+/* CALLOUT */
+.callout{border-radius:4px;padding:1rem;border-left:4px solid;margin:1rem 0}
+.callout--info{background:#eaf0ff;border-color:var(--primary)}
+.callout--success{background:#f0f8f1;border-color:var(--success)}
+.callout--warning{background:#fdf6e3;border-color:var(--warning)}
+.callout__label{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--text-secondary);margin-bottom:.25rem}
+.callout p{font-size:13px;color:var(--text-secondary)}
+.callout code{font-family:'IBM Plex Mono',monospace;font-size:12px;background:rgba(0,0,0,.06);padding:1px 5px;border-radius:3px}
+
+/* CHECKLIST */
+.checklist{list-style:none;padding:0;margin:.5rem 0}
+.checklist li{padding:.3rem 0 .3rem 1.5rem;position:relative;font-size:13px;color:var(--text-secondary)}
+.checklist li::before{content:'✓';position:absolute;left:0;color:var(--success);font-weight:700}
+
+/* BADGE */
+.badge{display:inline-block;padding:.15rem .5rem;font-size:11px;font-weight:600;border-radius:20px;background:#e8f0fe;color:var(--primary);letter-spacing:.05em;margin-left:.25rem}
+
+/* SUBSECTION */
+.subsection{margin-top:1.5rem}
+.subsection h3{font-size:1.1rem;font-weight:600;margin-bottom:.75rem;color:var(--text)}
+
+/* RESPONSIVE */
+@media(max-width:768px){
+  .sidebar{transform:translateX(-100%)}
+  .sidebar.open{transform:translateX(0)}
+  .content{margin-left:0;padding:1.25rem}
+  .hero{padding:2rem 1.25rem 1.75rem}
+  .hero__title{font-size:1.5rem}
+}
+
+/* FOOTER */
+footer{margin-left:var(--sidebar-width);padding:1.5rem 2rem;border-top:1px solid var(--border);font-size:12px;color:var(--text-muted);text-align:center}
+@media(max-width:768px){footer{margin-left:0}}
+</style>
+</head>
+<body>
+
+<!-- TOPBAR -->
+<header class="topbar">
+  <div class="topbar__brand">
+    <button class="menu-toggle" onclick="toggleSidebar()" aria-label="Toggle menu">&#9776;</button>
+    <div class="logo-dot"></div>
+    <div>
+      <div class="brand-kicker">IBM BOB</div>
+      <div class="brand-title">IDE Tutorial Lab Guide</div>
+    </div>
+  </div>
+  <div class="topbar__meta">
+    <a href="https://bob.ibm.com/docs/ide/tutorials/introduction" class="topbar__link" target="_blank" rel="noopener">Official Docs ↗</a>
+  </div>
+</header>
+
+<!-- LAYOUT -->
+<div class="layout">
+
+  <!-- SIDEBAR -->
+  <nav class="sidebar" id="sidebar">
+    <div class="sidebar__title">Lab Sections</div>
+    <div class="sidebar__nav">
+      <a href="#overview" class="sidebar__link active">
+        <span class="sidebar__num">00</span> Overview
+      </a>
+      <a href="#getting-started" class="sidebar__link">
+        <span class="sidebar__num">01</span> Getting Started
+      </a>
+      <a href="#tutorial-01" class="sidebar__link">
+        <span class="sidebar__num">T1</span> Start a Project (/init)
+      </a>
+      <a href="#tutorial-02" class="sidebar__link">
+        <span class="sidebar__num">T2</span> Commit &amp; Pull Request
+      </a>
+      <a href="#tutorial-03" class="sidebar__link">
+        <span class="sidebar__num">T3</span> Literate Coding
+      </a>
+      <a href="#tutorial-04" class="sidebar__link">
+        <span class="sidebar__num">T4</span> Standardize Behavior
+      </a>
+      <a href="#tutorial-05" class="sidebar__link">
+        <span class="sidebar__num">T5</span> Add a Custom Mode
+      </a>
+      <a href="#tutorial-06" class="sidebar__link">
+        <span class="sidebar__num">T6</span> Context Window
+      </a>
+      <a href="#architecture" class="sidebar__link">
+        <span class="sidebar__num">—</span> App Architecture
+      </a>
+    </div>
+  </nav>
+
+  <!-- MAIN CONTENT -->
+  <main class="content">
+
+    <!-- HERO -->
+    <div class="hero" id="overview">
+      <div class="hero__kicker">Workshop Lab Guide</div>
+      <h1 class="hero__title">IBM <span>Bob</span> IDE<br>Tutorial Series</h1>
+      <p class="hero__lead">Hands-on tutorials for the IBM Bob IDE using the <strong style="color:#fff">Galaxium Travels</strong> fictional luxury space travel booking system. Learn agentic AI-assisted development across the full SDLC.</p>
+      <div class="hero__actions">
+        <a href="#getting-started" class="btn btn--primary">Get Started</a>
+        <a href="https://github.com/IBM/galaxium-travels" class="btn btn--ghost" target="_blank" rel="noopener">View on GitHub ↗</a>
+      </div>
+    </div>
+
+    <!-- WHAT YOU WILL LEARN -->
+    <section class="section">
+      <div class="section-kicker">Lab Overview</div>
+      <div class="section-header"><h2>What you will accomplish</h2></div>
+      <p class="section-lead">IBM Bob is an agentic integrated development environment (IDE) that helps you write, test, upgrade, and secure software across the entire software development lifecycle (SDLC). In this tutorial series, you use Bob to add features to the Galaxium Travels demo application.</p>
+      <div class="grid grid--2" style="margin-top:1rem">
+        <div class="feature-card">
+          <h3>Project Setup</h3>
+          <p>Set up Bob in the Galaxium Travels repository and give Bob persistent context with <code>/init</code> and AGENTS.md files.</p>
+        </div>
+        <div class="feature-card">
+          <h3>Standardize Behavior</h3>
+          <p>Standardize Bob's behavior with custom rules files and create a custom mode to help with product management tasks.</p>
+        </div>
+        <div class="feature-card">
+          <h3>AI-Assisted Coding</h3>
+          <p>Write code with Bob's AI-assisted code completion features and use literate coding to generate code from written text.</p>
+        </div>
+        <div class="feature-card">
+          <h3>Agentic Workflows</h3>
+          <p>Use Bob's agentic capabilities to have Bob run prompts and perform actions, including Git commits and pull requests.</p>
+        </div>
+        <div class="feature-card">
+          <h3>Context Management</h3>
+          <p>Understand how to manage the context window effectively to maintain output quality and reduce token cost.</p>
+        </div>
+        <div class="feature-card">
+          <h3>Version Control</h3>
+          <p>Use Bob's native Git integration to create branches, stage changes, commit, push, and open pull requests.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- GETTING STARTED -->
+    <section class="section" id="getting-started">
+      <div class="section-kicker">Prerequisites</div>
+      <div class="section-header"><h2>Getting Started</h2></div>
+      <p class="section-lead">Before starting the tutorials, make sure you have the following tools installed and the Galaxium Travels demo repository cloned.</p>
+
+      <div class="subsection">
+        <h3>Step 1 — Download and install IBM Bob IDE</h3>
+        <p style="font-size:13px;color:var(--text-secondary);margin-bottom:.75rem">Bob is a standalone IDE application — not a plugin or extension. Download and install it from the official site.</p>
+        <a href="https://bob.ibm.com" class="btn btn--primary" target="_blank" rel="noopener">Download Bob IDE ↗</a>
+      </div>
+
+      <div class="subsection">
+        <h3>Step 2 — Clone the Galaxium Travels demo repository</h3>
+        <p style="font-size:13px;color:var(--text-secondary);margin-bottom:.75rem">The clone command also checks out the <code>bob-learning-path-branch</code> that contains the code you use in the tutorials.</p>
+        <div class="code-block">
+          <div class="code-block__header">
+            <span class="code-block__lang">bash</span>
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+          </div>
+          <div class="code-body">git clone -b bob-learning-path-branch https://github.com/IBM/galaxium-travels</div>
+        </div>
+      </div>
+
+      <div class="subsection">
+        <h3>Step 3 — Open the project in Bob IDE</h3>
+        <ul class="checklist">
+          <li>Open Bob IDE.</li>
+          <li>Select <strong>File → Open Folder</strong>.</li>
+          <li>Choose the <code>galaxium-travels</code> directory you cloned.</li>
+          <li>Wait for the project tree to load.</li>
+        </ul>
+      </div>
+
+      <div class="callout callout--info" style="margin-top:1.25rem">
+        <div class="callout__label">Tip</div>
+        <p>While not required, consider doing the <a href="https://bob.ibm.com/docs/ide/getting-started/quickstart" target="_blank" rel="noopener">Quickstart tutorial</a> to familiarize yourself with Bob's interface and features before starting this series.</p>
+      </div>
+    </section>
+
+    <!-- TUTORIALS -->
+    <section class="section">
+      <div class="section-kicker">Tutorial Series</div>
+      <div class="section-header"><h2>Tutorials</h2></div>
+      <p class="section-lead">Follow the tutorials in order — each one builds on the previous. Each tutorial links to its own detailed walkthrough page.</p>
+      <div class="grid grid--2" style="margin-top:1rem">
+        <a href="tutorials/01-start-a-project.html" class="tutorial-card">
+          <div class="tutorial-card__num">Tutorial 01</div>
+          <div class="tutorial-card__title">Start a project with /init and AGENTS.md</div>
+          <div class="tutorial-card__desc">Give Bob persistent project context across conversations and modes with /init, which automatically generates AGENTS.md files.</div>
+          <span class="tutorial-card__arrow">→</span>
+        </a>
+        <a href="tutorials/02-commit-and-pull-request.html" class="tutorial-card">
+          <div class="tutorial-card__num">Tutorial 02</div>
+          <div class="tutorial-card__title">Create a commit and pull request with Bob</div>
+          <div class="tutorial-card__desc">Use Bob to create a branch, stage changes, generate a commit message, push to your repository, and open a pull request.</div>
+          <span class="tutorial-card__arrow">→</span>
+        </a>
+        <a href="tutorials/03-literate-coding.html" class="tutorial-card">
+          <div class="tutorial-card__num">Tutorial 03</div>
+          <div class="tutorial-card__title">Use literate coding to generate code from comments</div>
+          <div class="tutorial-card__desc">Use literate coding to have Bob generate code from natural language comments. Bob helps you write precise, context-aware code modifications directly in your editor.</div>
+          <span class="tutorial-card__arrow">→</span>
+        </a>
+        <a href="tutorials/04-standardize-behavior.html" class="tutorial-card">
+          <div class="tutorial-card__num">Tutorial 04</div>
+          <div class="tutorial-card__title">Standardize Bob's behavior</div>
+          <div class="tutorial-card__desc">Standardize Bob's behavior across your team using project-level rules files that tell Bob to document its code and remember its previous actions.</div>
+          <span class="tutorial-card__arrow">→</span>
+        </a>
+        <a href="tutorials/05-add-custom-mode.html" class="tutorial-card">
+          <div class="tutorial-card__num">Tutorial 05</div>
+          <div class="tutorial-card__title">Add a custom mode</div>
+          <div class="tutorial-card__desc">Extend Bob's capabilities by creating a custom product manager mode with a tailored role definition, behavioral instructions, and deterministic tool access constraints.</div>
+          <span class="tutorial-card__arrow">→</span>
+        </a>
+        <a href="tutorials/06-context-window.html" class="tutorial-card">
+          <div class="tutorial-card__num">Tutorial 06</div>
+          <div class="tutorial-card__title">Create a new context window</div>
+          <div class="tutorial-card__desc">Manage Bob's context window to preserve memory, control cost, and maintain output quality during complex or long-running conversations.</div>
+          <span class="tutorial-card__arrow">→</span>
+        </a>
+      </div>
+    </section>
+
+    <!-- ARCHITECTURE -->
+    <section class="section" id="architecture">
+      <div class="section-kicker">Demo Application</div>
+      <div class="section-header"><h2>Architecture of Galaxium Travels</h2></div>
+      <p class="section-lead">Galaxium Travels is a fictional luxury space travel booking system with a full-stack architecture. You will use this application throughout the tutorial series.</p>
+
+      <table class="arch-table">
+        <thead>
+          <tr>
+            <th>Layer</th>
+            <th>Technology</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td>Front end</td><td>React, TypeScript</td></tr>
+          <tr><td>Back end</td><td>Python with REST and MCP interfaces</td></tr>
+          <tr><td>Database</td><td>SQLite with seed data</td></tr>
+        </tbody>
+      </table>
+
+      <div class="grid grid--2" style="margin-top:1.25rem">
+        <div class="feature-card">
+          <h3>Front End</h3>
+          <p>The React/TypeScript front end connects to back-end REST endpoints and presents data through a user-facing interface. Features include: viewing available flights, user registration and authentication, and flight booking.</p>
+        </div>
+        <div class="feature-card">
+          <h3>Back End</h3>
+          <p>Built around a SQLite database with data models, schemas, and seed data. Exposes a <strong>REST API</strong> for front-end consumption and an <strong>MCP interface</strong> that lets Bob interact directly with the back end as a tool.</p>
+        </div>
+      </div>
+
+      <div class="callout callout--success" style="margin-top:1.25rem">
+        <div class="callout__label">Did you know?</div>
+        <p>An API browser interface is available locally to explore and interact with back-end endpoints directly, without the front end. This lets you test operations such as flight retrieval, user registration, and booking.</p>
+      </div>
+    </section>
+
+  </main>
+</div>
+
+<footer>
+  IBM Bob IDE Tutorial Lab Guide &nbsp;·&nbsp; Based on <a href="https://bob.ibm.com/docs/ide/tutorials/introduction" target="_blank" rel="noopener">official IBM Bob documentation</a>
+  <br><span style="color:#c6c6c6;font-size:11px">Made with IBM Bob</span>
+</footer>
+
+<script>
+function toggleSidebar(){
+  document.getElementById('sidebar').classList.toggle('open');
+}
+
+// Highlight active sidebar link on scroll
+const links = document.querySelectorAll('.sidebar__link');
+const sections = Array.from(document.querySelectorAll('section[id], div[id]'));
+
+function onScroll(){
+  const scrollY = window.scrollY + 80;
+  let current = sections[0];
+  sections.forEach(s => { if(s.offsetTop <= scrollY) current = s; });
+  links.forEach(l => {
+    l.classList.remove('active');
+    if(l.getAttribute('href') === '#' + (current && current.id)) l.classList.add('active');
+  });
+}
+window.addEventListener('scroll', onScroll);
+
+function copyCode(btn){
+  const code = btn.closest('.code-block').querySelector('.code-body').textContent;
+  navigator.clipboard.writeText(code.trim()).then(() => {
+    btn.textContent = 'Copied!';
+    btn.classList.add('copied');
+    setTimeout(() => { btn.textContent = 'Copy'; btn.classList.remove('copied'); }, 2000);
+  });
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>Tutorial 02 — Create a commit and pull request with Bob | IBM Bob IDE Lab</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&family=IBM+Plex+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+<link rel="stylesheet" href="../assets/tutorial.css"/>
+</head>
+<body>
+<header class="topbar">
+  <div class="topbar__brand">
+    <button class="menu-toggle" onclick="document.getElementById('sidebar').classList.toggle('open')" aria-label="Menu">&#9776;</button>
+    <div class="logo-dot"></div>
+    <div>
+      <div class="brand-kicker">IBM BOB</div>
+      <div class="brand-title">IDE Tutorial Lab Guide</div>
+    </div>
+  </div>
+  <div class="topbar__meta">
+    <a href="https://bob.ibm.com/docs/ide/tutorials/create-commit-and-pr" class="topbar__link" target="_blank" rel="noopener">Official Docs ↗</a>
+  </div>
+</header>
+
+<div class="layout">
+  <nav class="sidebar" id="sidebar">
+    <a href="../index.html" class="sidebar__back">← Back to Lab Home</a>
+    <div class="sidebar__title">On This Page</div>
+    <div class="sidebar__nav">
+      <a href="#prereqs" class="sidebar__link active"><span class="sidebar__num">—</span> Prerequisites</a>
+      <a href="#setup" class="sidebar__link"><span class="sidebar__num">01</span> Set up the project</a>
+      <a href="#agent-mode" class="sidebar__link"><span class="sidebar__num">02</span> Switch to Agent mode</a>
+      <a href="#branch" class="sidebar__link"><span class="sidebar__num">03</span> Create a branch</a>
+      <a href="#code-change" class="sidebar__link"><span class="sidebar__num">04</span> Make a code change</a>
+      <a href="#git-workflow" class="sidebar__link"><span class="sidebar__num">05</span> Run the Git workflow</a>
+      <a href="#troubleshooting" class="sidebar__link"><span class="sidebar__num">—</span> Troubleshooting</a>
+      <a href="#next-steps" class="sidebar__link"><span class="sidebar__num">—</span> Next Steps</a>
+    </div>
+  </nav>
+
+  <main class="content">
+    <div class="page-header">
+      <div class="page-kicker">Tutorial 02 · Version Control</div>
+      <h1>Create a commit and pull request with Bob</h1>
+      <p class="page-lead">Use Bob to create a branch, stage changes, generate a commit message, push to your repository, and open a pull request.</p>
+    </div>
+
+    <div class="step" id="prereqs">
+      <div class="step-num">Prerequisites</div>
+      <h2>What you need</h2>
+      <ul>
+        <li><strong>IBM Bob IDE</strong> — Download and install the IBM Bob application. Bob is a standalone IDE application, not an extension.</li>
+        <li><strong>Git</strong> — Install Git to clone the example repository.</li>
+        <li><strong>GitHub account</strong> — A GitHub account and a fork of the Galaxium Travels example repository.</li>
+        <li><strong>GitHub SSH authentication</strong> — Generate an SSH key and add it to the ssh-agent so you can push to your fork over SSH.</li>
+      </ul>
+    </div>
+
+    <div class="step" id="setup">
+      <div class="step-num">Step 01</div>
+      <h2>Set up the project</h2>
+      <h3>Fork the repository</h3>
+      <p>You will work from a fork of the Galaxium Travels repository.</p>
+      <ol>
+        <li>Go to the <a href="https://github.com/IBM/galaxium-travels" target="_blank" rel="noopener">Galaxium Travels repository on GitHub</a>.</li>
+        <li>Click the <strong>Fork</strong> button in the top-right corner of the page.</li>
+        <li>Select your GitHub account as the owner of the fork.</li>
+      </ol>
+
+      <h3>Clone the repository</h3>
+      <p>In a terminal, clone the forked Galaxium Travels repository. Replace <code>&lt;YOUR_ID&gt;</code> with your GitHub username:</p>
+      <div class="code-block">
+        <div class="code-block__header">
+          <span class="code-block__lang">bash</span>
+          <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+        </div>
+        <div class="code-body">git clone git@github.com:&lt;YOUR_ID&gt;/galaxium-travels.git</div>
+      </div>
+      <div class="callout callout--warning">
+        <div class="callout__label">Authentication</div>
+        <p>If you get an authentication error, ensure you have added your SSH key to the ssh-agent. See <a href="https://docs.github.com/en/authentication" target="_blank" rel="noopener">GitHub's SSH documentation</a> for more information.</p>
+      </div>
+      <ol start="3">
+        <li>In Bob, click <strong>File</strong> then <strong>Open Folder</strong>.</li>
+        <li>Navigate to the <code>galaxium-travels</code> directory you just cloned and open it.</li>
+      </ol>
+    </div>
+
+    <div class="step" id="agent-mode">
+      <div class="step-num">Step 02</div>
+      <h2>Switch to Agent mode</h2>
+      <p>If the Bob chat interface is not already opened, open it by clicking the <strong>Bob icon</strong> beside the navigation bar or use the shortcut <code>Option + Command + B</code> (Mac) or <code>Ctrl + Alt + B</code> (Windows).</p>
+      <p>Use <strong>Agent mode</strong> so Bob can write and modify code, run Git commands, and guide you through the workflow. Bob still asks for permission before each operation unless explicitly allowed.</p>
+      <p>Click the mode selector drop-down in the agentic chat and select <strong>Agent</strong>, or type <code>/agent</code> in the chat.</p>
+    </div>
+
+    <div class="step" id="branch">
+      <div class="step-num">Step 03</div>
+      <h2>Create a branch</h2>
+      <p>Before making changes, create a feature branch so your work stays separate from <code>main</code>.</p>
+      <div class="code-block">
+        <div class="code-block__header">
+          <span class="code-block__lang">bob prompt</span>
+          <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+        </div>
+        <div class="code-body">Create and switch to a new branch named update-header.</div>
+      </div>
+      <p>Bob requests permission to run <code>git checkout -b update-header</code>. Click <strong>Approve for task</strong> to create the branch and switch to it.</p>
+    </div>
+
+    <div class="step" id="code-change">
+      <div class="step-num">Step 04</div>
+      <h2>Make a code change</h2>
+      <p>Make a small change to give Bob something to commit.</p>
+
+      <h3>Open the Header component</h3>
+      <p>In the Galaxium Travels codebase, open <code>booking_system_frontend/src/components/layout/Header.tsx</code>.</p>
+
+      <h3>Edit the header text</h3>
+      <p>Ask Bob to make the change <em>Galaxium Travels</em> → <em>Galaxium Travel Agency</em>. The <code>@</code> prefix adds a file to Bob's context so it knows exactly which file to edit.</p>
+      <div class="code-block">
+        <div class="code-block__header">
+          <span class="code-block__lang">bob prompt</span>
+          <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+        </div>
+        <div class="code-body">Change the name of the Header from `Galaxium Travels` to `Galaxium Travel Agency` in @booking_system_frontend/src/components/layout/Header.tsx</div>
+      </div>
+      <p>Alternatively, you can manually edit the file and change the span to:</p>
+      <div class="code-block">
+        <div class="code-block__header">
+          <span class="code-block__lang">tsx</span>
+          <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+        </div>
+        <div class="code-body">&lt;span className="text-2xl font-bold bg-cosmic-gradient bg-clip-text text-transparent"&gt;
+  Galaxium Travel Agency
+&lt;/span&gt;</div>
+      </div>
+    </div>
+
+    <div class="step" id="git-workflow">
+      <div class="step-num">Step 05</div>
+      <h2>Run the Git workflow</h2>
+      <h3>Stage your changes</h3>
+      <div class="code-block">
+        <div class="code-block__header">
+          <span class="code-block__lang">bob prompt</span>
+          <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+        </div>
+        <div class="code-body">Stage all the changes I made for the header component update.</div>
+      </div>
+      <p>Bob inspects the working tree, identifies modified files, and requests permission to run <code>git add</code>. Click <strong>Approve for task</strong>.</p>
+
+      <h3>Commit your changes</h3>
+      <div class="code-block">
+        <div class="code-block__header">
+          <span class="code-block__lang">bob prompt</span>
+          <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+        </div>
+        <div class="code-body">Commit the staged changes with a descriptive commit message that summarizes what was added.</div>
+      </div>
+      <p>Bob reviews the staged diff and generates a commit message. Click <strong>I understand the risks</strong>, then click <strong>Approve</strong> so Bob can run <code>git commit</code>.</p>
+
+      <h3>Push the changes</h3>
+      <div class="code-block">
+        <div class="code-block__header">
+          <span class="code-block__lang">bob prompt</span>
+          <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+        </div>
+        <div class="code-body">Push my changes to the remote repository.</div>
+      </div>
+      <p>Bob identifies the current branch and remote, then requests permission to run <code>git push</code>. Click <strong>Approve for task</strong>.</p>
+
+      <h3>Open a pull request</h3>
+      <div class="code-block">
+        <div class="code-block__header">
+          <span class="code-block__lang">bob prompt</span>
+          <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+        </div>
+        <div class="code-body">Create a pull request to merge my changes into the main branch. Write a clear title and description based on what was changed.</div>
+      </div>
+      <p>Bob requires GitHub authentication the first time you create a pull request. Bob opens a browser window for you to authorize access. Once authorized, Bob opens the pull request. Click the provided link to access the pull request in your browser. After reviewing the title and description, click <strong>Create pull request</strong>.</p>
+
+      <div class="callout callout--info">
+        <div class="callout__label">Tip</div>
+        <p>To have Bob create pull requests without a confirmation window, install the <a href="https://cli.github.com/" target="_blank" rel="noopener">GitHub CLI</a> and ask Bob to use it to create pull requests.</p>
+      </div>
+    </div>
+
+    <div class="step" id="troubleshooting">
+      <div class="step-num">Troubleshooting</div>
+      <h2>Common issues</h2>
+      <ul>
+        <li><strong>Push rejected or authentication failed:</strong> Confirm Git is configured with credentials that can push to your fork.</li>
+        <li><strong>Branch <code>update-header</code> already exists:</strong> Ask Bob to switch to the existing branch or choose another branch name.</li>
+        <li><strong>Pull request targets IBM/galaxium-travels:</strong> Change the base repository to your fork before creating the pull request.</li>
+      </ul>
+    </div>
+
+    <div class="step" id="next-steps">
+      <div class="step-num">Summary</div>
+      <h2>Next steps</h2>
+      <p>In this tutorial, you learned how to use Bob's native Git integration to manage code changes without leaving the IDE — including branching, staging, committing, pushing, and opening pull requests.</p>
+    </div>
+
+    <div class="nav-footer">
+      <a href="01-start-a-project.html" class="nav-btn">
+        <span class="nav-btn__dir">← Previous</span>
+        <span class="nav-btn__title">Start a project with /init and AGENTS.md</span>
+      </a>
+      <a href="03-literate-coding.html" class="nav-btn nav-btn--next">
+        <span class="nav-btn__dir">Next →</span>
+        <span class="nav-btn__title">Use literate coding to generate code from comments</span>
+      </a>
+    </div>
+  </main>
+</div>
+
+<footer>
+  IBM Bob IDE Tutorial Lab Guide &nbsp;·&nbsp; Tutorial 02 of 06
+  <br><span style="color:#c6c6c6;font-size:11px">Made with IBM Bob</span>
+</footer>
+
+<script>
+function copyCode(btn){
+  const code = btn.closest('.code-block').querySelector('.code-body').textContent;
+  navigator.clipboard.writeText(code.trim()).then(() => {
+    btn.textContent = 'Copied!'; btn.classList.add('copied');
+    setTimeout(() => { btn.textContent = 'Copy'; btn.classList.remove('copied'); }, 2000);
+  });
+}
+const links = document.querySelectorAll('.sidebar__link');
+const steps = document.querySelectorAll('.step[id]');
+window.addEventListener('scroll', () => {
+  const y = window.scrollY + 70;
+  let cur = steps[0];
+  steps.forEach(s => { if(s.offsetTop <= y) cur = s; });
+  links.forEach(l => { l.classList.remove('active'); if(l.getAttribute('href') === '#' + (cur && cur.id)) l.classList.add('active'); });
+});
+</script>
+</body>
+</html>

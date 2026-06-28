@@ -1,0 +1,18 @@
+title: IBM Bob IDE — Tutorial Lab Guide
+description: Hands-on tutorials for IBM Bob IDE using the Galaxium Travels demo application.
+url: ""
+baseurl: ""
+theme: null
+markdown: kramdown
+permalink: pretty
+
+collections:
+  tutorials:
+    output: true
+    permalink: /tutorials/:name/
+
+defaults:
+  - scope:
+      path: ""
+    values:
+      layout: default

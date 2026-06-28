@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>Tutorial 01 — Start a project with /init and AGENTS.md | IBM Bob IDE Lab</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&family=IBM+Plex+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+<link rel="stylesheet" href="../assets/tutorial.css"/>
+</head>
+<body>
+<header class="topbar">
+  <div class="topbar__brand">
+    <button class="menu-toggle" onclick="document.getElementById('sidebar').classList.toggle('open')" aria-label="Menu">&#9776;</button>
+    <div class="logo-dot"></div>
+    <div>
+      <div class="brand-kicker">IBM BOB</div>
+      <div class="brand-title">IDE Tutorial Lab Guide</div>
+    </div>
+  </div>
+  <div class="topbar__meta">
+    <a href="https://bob.ibm.com/docs/ide/tutorials/start-a-project" class="topbar__link" target="_blank" rel="noopener">Official Docs ↗</a>
+  </div>
+</header>
+
+<div class="layout">
+  <nav class="sidebar" id="sidebar">
+    <a href="../index.html" class="sidebar__back">← Back to Lab Home</a>
+    <div class="sidebar__title">On This Page</div>
+    <div class="sidebar__nav">
+      <a href="#prereqs" class="sidebar__link active"><span class="sidebar__num">—</span> Prerequisites</a>
+      <a href="#run-init" class="sidebar__link"><span class="sidebar__num">01</span> Run /init</a>
+      <a href="#explore-agents" class="sidebar__link"><span class="sidebar__num">02</span> Explore AGENTS.md</a>
+      <a href="#mode-specific" class="sidebar__link"><span class="sidebar__num">03</span> Mode-specific Files</a>
+      <a href="#maintain" class="sidebar__link"><span class="sidebar__num">04</span> Maintain AGENTS.md</a>
+      <a href="#next-steps" class="sidebar__link"><span class="sidebar__num">—</span> Next Steps</a>
+    </div>
+  </nav>
+
+  <main class="content">
+    <div class="page-header">
+      <div class="page-kicker">Tutorial 01 · Getting Started</div>
+      <h1>Start a project with /init and AGENTS.md</h1>
+      <p class="page-lead">Give Bob persistent project context across conversations and modes with <code>/init</code>, which automatically generates AGENTS.md files.</p>
+    </div>
+
+    <div class="step" id="prereqs">
+      <div class="step-num">Prerequisites</div>
+      <h2>What you need</h2>
+      <p>To complete this tutorial, you need the following:</p>
+      <ul>
+        <li>Clone the Galaxium Travels demo code. The clone command also checks out the <code>bob-learning-path-branch</code> that contains the code you use in the tutorials.</li>
+      </ul>
+      <div class="code-block">
+        <div class="code-block__header">
+          <span class="code-block__lang">bash</span>
+          <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+        </div>
+        <div class="code-body">git clone -b bob-learning-path-branch https://github.com/IBM/galaxium-travels</div>
+      </div>
+      <ul>
+        <li>IBM Bob IDE open with the Galaxium Travels project loaded.</li>
+        <li>While not required, consider doing the Quickstart tutorial to familiarize yourself with Bob's interface and features.</li>
+      </ul>
+    </div>
+
+    <div class="step" id="run-init">
+      <div class="step-num">Step 01</div>
+      <h2>Run /init</h2>
+      <p>The <code>/init</code> command scans a project and generates a structured summary file called <strong>AGENTS.md</strong> that Bob uses as persistent context in every conversation. It is how you give Bob knowledge about a project's structure, conventions, and codebase without requiring Bob to re-read every file at the start of each interaction.</p>
+
+      <div class="callout callout--info">
+        <div class="callout__label">Why this matters</div>
+        <p>Large language models are stateless. Each new conversation starts with no memory of previous interactions. Without explicit project context, Bob must discover the codebase on every new interaction — which is inefficient at scale. Running <code>/init</code> solves this.</p>
+      </div>
+
+      <h3>How to run /init</h3>
+      <ol>
+        <li>In Bob IDE, navigate to the <strong>Hi, I'm Bob</strong> chat interface.</li>
+        <li>Switch to <strong>Agent mode</strong> using the mode selector at the bottom of the sidebar.</li>
+        <li>Enter the <code>/init</code> command in the chat interface.</li>
+      </ol>
+      <div class="code-block">
+        <div class="code-block__header">
+          <span class="code-block__lang">bob chat</span>
+          <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+        </div>
+        <div class="code-body">/init</div>
+      </div>
+      <ol start="4">
+        <li>If you have auto-approval disabled, Bob asks your permission to read files and write the AGENTS.md files. Click <strong>Approve</strong>.</li>
+        <li>Bob reads the relevant files in the project, then generates the main <code>AGENTS.md</code> file in the Galaxium Travels root directory and a <code>.bob</code> folder with mode-specific AGENTS.md files.</li>
+      </ol>
+    </div>
+
+    <div class="step" id="explore-agents">
+      <div class="step-num">Step 02</div>
+      <h2>Explore AGENTS.md files</h2>
+      <p>The AGENTS.md files function like onboarding documentation for Bob. AGENTS.md is a concise, actionable summary that provides everything Bob needs to understand the project's structure and conventions.</p>
+      <p>You can locate the main AGENTS.md file at the bottom of the Bob file explorer on the left-hand side. Open the file to read its contents.</p>
+      <p>The AGENTS.md file typically contains the following components:</p>
+      <ul class="checklist">
+        <li>Project overview and purpose</li>
+        <li>Directory structure and key file locations</li>
+        <li>Technology stack and dependencies</li>
+        <li>Architectural patterns and conventions</li>
+        <li>Development workflows</li>
+      </ul>
+      <p>Bob automatically applies the AGENTS.md to new conversations and learns the project context.</p>
+    </div>
+
+    <div class="step" id="mode-specific">
+      <div class="step-num">Step 03</div>
+      <h2>Mode-specific AGENTS.md files</h2>
+      <p>In addition to the main AGENTS.md in the Galaxium Travels root directory, <code>/init</code> generates mode-specific context files in the <code>.bob</code> folder for each built-in mode. Each mode-specific AGENTS.md extends the main AGENTS.md with context relevant to that mode's purpose.</p>
+
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr><th>File</th><th>Mode</th></tr>
+          </thead>
+          <tbody>
+            <tr><td><code>.bob/rules-code/AGENTS-code.md</code></td><td>Agent mode</td></tr>
+            <tr><td><code>.bob/rules-plan/AGENTS-plan.md</code></td><td>Plan mode</td></tr>
+            <tr><td><code>.bob/rules-ask/AGENTS-ask.md</code></td><td>Ask mode</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="callout callout--info">
+        <div class="callout__label">Note</div>
+        <p>The Plan mode context emphasizes architectural conventions, while the Agent mode context highlights file structure and naming patterns.</p>
+      </div>
+    </div>
+
+    <div class="step" id="maintain">
+      <div class="step-num">Step 04</div>
+      <h2>Maintain the AGENTS.md files</h2>
+      <p>Re-run <code>/init</code> after you make the following project adjustments:</p>
+      <ul class="checklist">
+        <li>Adding new modules or services</li>
+        <li>Changing the directory structure</li>
+        <li>Adopting new technologies or frameworks</li>
+        <li>Onboarding new team members who will use Bob</li>
+      </ul>
+      <p>You can also <strong>manually edit</strong> the AGENTS.md to add context that Bob's automated scan might not capture, such as business rules, deployment conventions, or team-specific practices.</p>
+    </div>
+
+    <div class="step" id="next-steps">
+      <div class="step-num">Summary</div>
+      <h2>Next steps</h2>
+      <p>In this tutorial, you learned the following:</p>
+      <ul class="checklist">
+        <li>Large language models are stateless. Running the <code>/init</code> command solves this by generating AGENTS.md — a persistent context file Bob reads at the start of every conversation.</li>
+        <li>The mode-specific AGENTS.md files provide targeted context for Agent, Plan, and Ask modes.</li>
+        <li>Re-run <code>/init</code> after major project changes to keep the context current.</li>
+      </ul>
+    </div>
+
+    <div class="nav-footer">
+      <a href="../index.html" class="nav-btn">
+        <span class="nav-btn__dir">← Previous</span>
+        <span class="nav-btn__title">Lab Home</span>
+      </a>
+      <a href="02-commit-and-pull-request.html" class="nav-btn nav-btn--next">
+        <span class="nav-btn__dir">Next →</span>
+        <span class="nav-btn__title">Create a commit and pull request with Bob</span>
+      </a>
+    </div>
+  </main>
+</div>
+
+<footer>
+  IBM Bob IDE Tutorial Lab Guide &nbsp;·&nbsp; Tutorial 01 of 06
+  <br><span style="color:#c6c6c6;font-size:11px">Made with IBM Bob</span>
+</footer>
+
+<script>
+function copyCode(btn){
+  const code = btn.closest('.code-block').querySelector('.code-body').textContent;
+  navigator.clipboard.writeText(code.trim()).then(() => {
+    btn.textContent = 'Copied!'; btn.classList.add('copied');
+    setTimeout(() => { btn.textContent = 'Copy'; btn.classList.remove('copied'); }, 2000);
+  });
+}
+const links = document.querySelectorAll('.sidebar__link');
+const steps = document.querySelectorAll('.step[id]');
+window.addEventListener('scroll', () => {
+  const y = window.scrollY + 70;
+  let cur = steps[0];
+  steps.forEach(s => { if(s.offsetTop <= y) cur = s; });
+  links.forEach(l => { l.classList.remove('active'); if(l.getAttribute('href') === '#' + (cur && cur.id)) l.classList.add('active'); });
+});
+</script>
+</body>
+</html>

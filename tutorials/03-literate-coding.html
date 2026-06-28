@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>Tutorial 03 — Use literate coding to generate code from comments | IBM Bob IDE Lab</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&family=IBM+Plex+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+<link rel="stylesheet" href="../assets/tutorial.css"/>
+</head>
+<body>
+<header class="topbar">
+  <div class="topbar__brand">
+    <button class="menu-toggle" onclick="document.getElementById('sidebar').classList.toggle('open')" aria-label="Menu">&#9776;</button>
+    <div class="logo-dot"></div>
+    <div>
+      <div class="brand-kicker">IBM BOB</div>
+      <div class="brand-title">IDE Tutorial Lab Guide</div>
+    </div>
+  </div>
+  <div class="topbar__meta">
+    <a href="https://bob.ibm.com/docs/ide/tutorials/generate-code-from-comments" class="topbar__link" target="_blank" rel="noopener">Official Docs ↗</a>
+  </div>
+</header>
+
+<div class="layout">
+  <nav class="sidebar" id="sidebar">
+    <a href="../index.html" class="sidebar__back">← Back to Lab Home</a>
+    <div class="sidebar__title">On This Page</div>
+    <div class="sidebar__nav">
+      <a href="#overview" class="sidebar__link active"><span class="sidebar__num">—</span> What is Literate Coding?</a>
+      <a href="#prereqs" class="sidebar__link"><span class="sidebar__num">—</span> Prerequisites</a>
+      <a href="#open-file" class="sidebar__link"><span class="sidebar__num">01</span> Open the file</a>
+      <a href="#position-cursor" class="sidebar__link"><span class="sidebar__num">02</span> Position your cursor</a>
+      <a href="#activate" class="sidebar__link"><span class="sidebar__num">03</span> Activate literate coding</a>
+      <a href="#write-instruction" class="sidebar__link"><span class="sidebar__num">04</span> Write your instruction</a>
+      <a href="#generate" class="sidebar__link"><span class="sidebar__num">05</span> Generate and accept</a>
+      <a href="#next-steps" class="sidebar__link"><span class="sidebar__num">—</span> Next Steps</a>
+    </div>
+  </nav>
+
+  <main class="content">
+    <div class="page-header">
+      <div class="page-kicker">Tutorial 03 · In-Editor AI</div>
+      <h1>Use literate coding to generate code from comments</h1>
+      <p class="page-lead">Use literate coding to have Bob generate code from natural language comments. Bob helps you write precise, context-aware code modifications directly in your editor.</p>
+    </div>
+
+    <div class="step" id="overview">
+      <div class="step-num">Overview</div>
+      <h2>What is literate coding?</h2>
+      <p>Literate coding lets you write code with AI assistance directly inside your editor. Instead of switching to a chat window or writing long prompts, you type instructions in plain language right where the code should go. Bob then generates the implementation for you in context and shows a diff of the changes.</p>
+      <p>Literate coding is most effective for the following types of modifications:</p>
+      <ul class="checklist">
+        <li><strong>Adding wrapper logic:</strong> Retry mechanisms, error handling, or logging around existing code.</li>
+        <li><strong>Refactoring specific blocks:</strong> Modifying targeted sections while preserving surrounding logic.</li>
+        <li><strong>Quick targeted modifications:</strong> Precise changes to specific functions without affecting broader structure.</li>
+      </ul>
+      <div class="callout callout--info">
+        <div class="callout__label">Tip</div>
+        <p>For complex modifications that affect multiple functions or files, consider using the <strong>Hi, I'm Bob</strong> agentic chat interface to create a Plan instead of literate coding.</p>
+      </div>
+
+      <h3>The scenario</h3>
+      <p>In this tutorial, you fix an intermittent timeout by wrapping a code block with retry logic. The Galaxium Travels back end is unreliable and occasionally gets timeout errors. Instead of rewriting the code from scratch, you use literate coding to wrap the specific block of code with retry logic.</p>
+    </div>
+
+    <div class="step" id="prereqs">
+      <div class="step-num">Prerequisites</div>
+      <h2>What you need</h2>
+      <ul>
+        <li>Clone the Galaxium Travels demo code:</li>
+      </ul>
+      <div class="code-block">
+        <div class="code-block__header">
+          <span class="code-block__lang">bash</span>
+          <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+        </div>
+        <div class="code-body">git clone -b bob-learning-path-branch https://github.com/IBM/galaxium-travels</div>
+      </div>
+      <ul>
+        <li>IBM Bob IDE open with the Galaxium Travels project loaded.</li>
+        <li>You have run <code>/init</code> in the Bob agentic chat interface. Refer to <a href="01-start-a-project.html">Tutorial 01</a> if you have not done this yet.</li>
+        <li>You may want to start a new context window for this tutorial. Refer to <a href="06-context-window.html">Tutorial 06</a> for instructions.</li>
+      </ul>
+    </div>
+
+    <div class="step" id="open-file">
+      <div class="step-num">Step 01</div>
+      <h2>Open the file</h2>
+      <p>Open the following file in Bob IDE:</p>
+      <div class="code-block">
+        <div class="code-block__header">
+          <span class="code-block__lang">path</span>
+          <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+        </div>
+        <div class="code-body">booking_system_frontend/src/pages/Flights.tsx</div>
+      </div>
+    </div>
+
+    <div class="step" id="position-cursor">
+      <div class="step-num">Step 02</div>
+      <h2>Position your cursor</h2>
+      <p>Click into <strong>line 43</strong> in the file. This is the location where Bob will insert the retry logic.</p>
+    </div>
+
+    <div class="step" id="activate">
+      <div class="step-num">Step 03</div>
+      <h2>Activate literate coding mode</h2>
+      <p>Click the <strong>ellipsis (…)</strong> menu in the editor toolbar and then select <strong>Literate Coding Mode</strong>.</p>
+    </div>
+
+    <div class="step" id="write-instruction">
+      <div class="step-num">Step 04</div>
+      <h2>Write your instruction</h2>
+      <p>Enter the following natural language instruction to describe the desired change on line 43:</p>
+      <div class="code-block">
+        <div class="code-block__header">
+          <span class="code-block__lang">literate coding instruction</span>
+          <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+        </div>
+        <div class="code-body">The backend is unreliable at times. We need a retry logic here</div>
+      </div>
+    </div>
+
+    <div class="step" id="generate">
+      <div class="step-num">Step 05</div>
+      <h2>Generate and accept the changes</h2>
+      <h3>Generate the code</h3>
+      <p>Click <strong>Generate</strong> to produce the modifications. Bob presents changes in a diff view interface. The highlighted red text shows what code is removed and the highlighted green text shows what code Bob adds.</p>
+
+      <h3>Accept the changes</h3>
+      <p>Review the changes and click <strong>Accept All</strong> to apply them.</p>
+
+      <div class="callout callout--success">
+        <div class="callout__label">Result</div>
+        <p>You have added a retry loop to resolve timeout errors in the Galaxium Travels web application. The change was applied in-editor with a clear diff — no chat switching required.</p>
+      </div>
+    </div>
+
+    <div class="step" id="next-steps">
+      <div class="step-num">Summary</div>
+      <h2>Next steps</h2>
+      <p>In this tutorial, you learned how literate coding lets you use precise, natural language-driven code modifications. Literate coding shows you a code diff so you can review code before accepting the changes.</p>
+      <p>Advance to <a href="04-standardize-behavior.html">Tutorial 04 — Standardize Bob's behavior</a> to learn about the agentic chat interface, which is the primary interface for complex, multi-step development tasks in Bob.</p>
+    </div>
+
+    <div class="nav-footer">
+      <a href="02-commit-and-pull-request.html" class="nav-btn">
+        <span class="nav-btn__dir">← Previous</span>
+        <span class="nav-btn__title">Create a commit and pull request with Bob</span>
+      </a>
+      <a href="04-standardize-behavior.html" class="nav-btn nav-btn--next">
+        <span class="nav-btn__dir">Next →</span>
+        <span class="nav-btn__title">Standardize Bob's behavior</span>
+      </a>
+    </div>
+  </main>
+</div>
+
+<footer>
+  IBM Bob IDE Tutorial Lab Guide &nbsp;·&nbsp; Tutorial 03 of 06
+  <br><span style="color:#c6c6c6;font-size:11px">Made with IBM Bob</span>
+</footer>
+
+<script>
+function copyCode(btn){
+  const code = btn.closest('.code-block').querySelector('.code-body').textContent;
+  navigator.clipboard.writeText(code.trim()).then(() => {
+    btn.textContent = 'Copied!'; btn.classList.add('copied');
+    setTimeout(() => { btn.textContent = 'Copy'; btn.classList.remove('copied'); }, 2000);
+  });
+}
+const links = document.querySelectorAll('.sidebar__link');
+const steps = document.querySelectorAll('.step[id]');
+window.addEventListener('scroll', () => {
+  const y = window.scrollY + 70;
+  let cur = steps[0];
+  steps.forEach(s => { if(s.offsetTop <= y) cur = s; });
+  links.forEach(l => { l.classList.remove('active'); if(l.getAttribute('href') === '#' + (cur && cur.id)) l.classList.add('active'); });
+});
+</script>
+</body>
+</html>

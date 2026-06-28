@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>Tutorial 05 — Add a custom mode | IBM Bob IDE Lab</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&family=IBM+Plex+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+<link rel="stylesheet" href="../assets/tutorial.css"/>
+</head>
+<body>
+<header class="topbar">
+  <div class="topbar__brand">
+    <button class="menu-toggle" onclick="document.getElementById('sidebar').classList.toggle('open')" aria-label="Menu">&#9776;</button>
+    <div class="logo-dot"></div>
+    <div>
+      <div class="brand-kicker">IBM BOB</div>
+      <div class="brand-title">IDE Tutorial Lab Guide</div>
+    </div>
+  </div>
+  <div class="topbar__meta">
+    <a href="https://bob.ibm.com/docs/ide/tutorials/add-bob-capabilities" class="topbar__link" target="_blank" rel="noopener">Official Docs ↗</a>
+  </div>
+</header>
+
+<div class="layout">
+  <nav class="sidebar" id="sidebar">
+    <a href="../index.html" class="sidebar__back">← Back to Lab Home</a>
+    <div class="sidebar__title">On This Page</div>
+    <div class="sidebar__nav">
+      <a href="#overview" class="sidebar__link active"><span class="sidebar__num">—</span> What are Custom Modes?</a>
+      <a href="#prereqs" class="sidebar__link"><span class="sidebar__num">—</span> Prerequisites</a>
+      <a href="#open-settings" class="sidebar__link"><span class="sidebar__num">01</span> Open mode settings</a>
+      <a href="#create-mode" class="sidebar__link"><span class="sidebar__num">02</span> Create a new mode</a>
+      <a href="#fill-details" class="sidebar__link"><span class="sidebar__num">03</span> Fill in mode details</a>
+      <a href="#mode-instructions" class="sidebar__link"><span class="sidebar__num">04</span> Mode instructions</a>
+      <a href="#test-mode" class="sidebar__link"><span class="sidebar__num">05</span> Test the mode</a>
+      <a href="#next-steps" class="sidebar__link"><span class="sidebar__num">—</span> Next Steps</a>
+    </div>
+  </nav>
+
+  <main class="content">
+    <div class="page-header">
+      <div class="page-kicker">Tutorial 05 · Extensibility</div>
+      <h1>Add a custom mode</h1>
+      <p class="page-lead">Extend Bob's job capabilities by creating a custom product manager mode with a tailored role definition, behavioral instructions, and deterministic tool access constraints.</p>
+    </div>
+
+    <div class="step" id="overview">
+      <div class="step-num">Overview</div>
+      <h2>What are custom modes?</h2>
+      <p>Bob's built-in Agent, Plan, and Ask modes cover common development workflows. Custom modes extend modes by letting teams and developers define specialized personas with tailored instructions and specific tool access. A custom mode combines a role definition, behavioral instructions, and a deterministic set of permitted tools.</p>
+      <div class="callout callout--info">
+        <div class="callout__label">Rules vs Modes</div>
+        <p>Rules (from Tutorial 04) apply to every conversation regardless of mode. A custom mode does <strong>not</strong> override or bypass rules. For example, if you configured an internal monologue rule as a global rule, that rule continues to generate summaries even when using any custom modes you create. This makes rules the correct mechanism for cross-cutting behaviors, while mode instructions handle mode-specific behaviors.</p>
+      </div>
+      <p>In this tutorial, you show Bob how to behave like a product manager by creating a custom mode that clarifies user problems, proposes user stories, suggests an MVP, defines success metrics, and produces a roadmap.</p>
+    </div>
+
+    <div class="step" id="prereqs">
+      <div class="step-num">Prerequisites</div>
+      <h2>What you need</h2>
+      <ul>
+        <li>Clone the Galaxium Travels demo code:</li>
+      </ul>
+      <div class="code-block">
+        <div class="code-block__header">
+          <span class="code-block__lang">bash</span>
+          <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+        </div>
+        <div class="code-body">git clone -b bob-learning-path-branch https://github.com/IBM/galaxium-travels</div>
+      </div>
+      <ul>
+        <li>IBM Bob IDE open with the Galaxium Travels project loaded.</li>
+        <li>You may want to start a new context window for this tutorial. Refer to <a href="06-context-window.html">Tutorial 06</a> for instructions.</li>
+      </ul>
+    </div>
+
+    <div class="step" id="open-settings">
+      <div class="step-num">Step 01</div>
+      <h2>Open mode settings</h2>
+      <p>In the Bob IDE, open the mode selector and then click the <strong>gear icon</strong> to open mode settings.</p>
+    </div>
+
+    <div class="step" id="create-mode">
+      <div class="step-num">Step 02</div>
+      <h2>Create a new mode</h2>
+      <p>Click the <strong>+ icon</strong> to create a new mode.</p>
+    </div>
+
+    <div class="step" id="fill-details">
+      <div class="step-num">Step 03</div>
+      <h2>Fill in the mode details</h2>
+      <p>Fill in the slug, name, scope, and tool permissions with the following values:</p>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr><th>Field</th><th>Value</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>Slug</td><td><code>product-management</code></td></tr>
+            <tr><td>Name</td><td><code>product-manager</code></td></tr>
+            <tr><td>Description</td><td>Turns fuzzy ideas into a simple, prioritized product plan with clear outcomes. Creates an MVP scope, user stories, success metrics, and a lightweight roadmap that a team can execute.</td></tr>
+            <tr><td>Scope</td><td>Project</td></tr>
+            <tr><td>Available Tools</td><td>Read files, Edit files, Use MCP</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h3>Role definition</h3>
+      <div class="code-block">
+        <div class="code-block__header">
+          <span class="code-block__lang">role definition</span>
+          <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+        </div>
+        <div class="code-body">You are a Product Manager. You help define what to build and why. You clarify the user problem, propose an MVP, prioritize work, define success metrics, and produce simple, shareable artifacts (MVP card, roadmap, user stories, risks). You keep it practical and relatable for demos - minimal jargon, fast decisions, and explicit tradeoffs.
+
+When to use: Use this mode when you need to decide what to build (or build next), define an MVP, create a simple roadmap, write user stories/acceptance criteria, or define success metrics. Not for coding or deep technical architecture.</div>
+      </div>
+    </div>
+
+    <div class="step" id="mode-instructions">
+      <div class="step-num">Step 04</div>
+      <h2>Mode-specific custom instructions</h2>
+      <p>In the <strong>Mode-specific Custom Instructions</strong> field, copy and paste the following:</p>
+      <div class="code-block">
+        <div class="code-block__header">
+          <span class="code-block__lang">mode instructions</span>
+          <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+        </div>
+        <div class="code-body">1. Start by summarizing the request in 2-3 lines and extract:
+   a. Target user
+   b. Problem/pain point
+   c. Desired outcome
+   d. Constraints (time, scope, dependencies)
+
+2. Ask up to 5 clarifying questions max. If answers are missing, make reasonable assumptions and label them clearly.
+
+3. Produce these demo-friendly outputs every time, and keep each section short:
+   a. MVP Card: Goal, User, Pain, In Scope (3-6 bullets), Out of Scope (2-4 bullets)
+   b. Now / Next / Later roadmap (3-5 bullets per column)
+   c. Top 5 user stories with "Done when..." (2-3 acceptance checks each)
+   d. Success metrics: 1 Primary, 1-2 Secondary, 1 Guardrail
+   e. Risks & open questions (2-4)
+
+4. Make tradeoffs explicit. If something is added to MVP, something else must move to Next/Later.
+
+5. End with a single recommended next decision the user should approve, for example, confirm MVP scope or pick between two options.
+
+6. Keep language simple and relatable, and avoid framework names unless the user asks (no RICE/PRD jargon by default).
+
+7. If helpful, include one small diagram (optional), such as a simple flow of the user journey.</div>
+      </div>
+      <p>Click <strong>Save</strong> to save the mode. Bob creates a <code>custom_modes.yaml</code> file in <code>.bob</code> that contains the product manager mode configuration. You can edit this file to make changes.</p>
+    </div>
+
+    <div class="step" id="test-mode">
+      <div class="step-num">Step 05</div>
+      <h2>Test the product manager mode</h2>
+      <h3>Switch to product-manager mode</h3>
+      <p>Open the mode selector and switch to the <strong>product-manager</strong> mode.</p>
+
+      <h3>Ask Bob which feature to build next</h3>
+      <div class="code-block">
+        <div class="code-block__header">
+          <span class="code-block__lang">bob prompt</span>
+          <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+        </div>
+        <div class="code-body">What feature should we build next?</div>
+      </div>
+      <div class="callout callout--success">
+        <div class="callout__label">Expected result</div>
+        <p>Bob gives you a list of potential features to build, and might ask clarifying questions to better understand the current state of the product and user needs — behaving exactly like a product manager.</p>
+      </div>
+    </div>
+
+    <div class="step" id="next-steps">
+      <div class="step-num">Summary</div>
+      <h2>Next steps</h2>
+      <p>In this tutorial, you learned how to create a custom mode that defines a product manager persona with specific instructions and tool access. You also tested the mode by asking Bob to recommend a new feature to build.</p>
+      <p>For next steps, consider:</p>
+      <ul class="checklist">
+        <li>Experimenting with different instructions, tools, and role definitions (e.g., a UX designer, data analyst, or DevOps specialist mode).</li>
+        <li>Combining custom modes with rules to create powerful, context-aware assistants.</li>
+        <li>Sharing your custom modes with your team by committing the <code>custom_modes.yaml</code> file to your codebase.</li>
+      </ul>
+    </div>
+
+    <div class="nav-footer">
+      <a href="04-standardize-behavior.html" class="nav-btn">
+        <span class="nav-btn__dir">← Previous</span>
+        <span class="nav-btn__title">Standardize Bob's behavior</span>
+      </a>
+      <a href="06-context-window.html" class="nav-btn nav-btn--next">
+        <span class="nav-btn__dir">Next →</span>
+        <span class="nav-btn__title">Create a new context window</span>
+      </a>
+    </div>
+  </main>
+</div>
+
+<footer>
+  IBM Bob IDE Tutorial Lab Guide &nbsp;·&nbsp; Tutorial 05 of 06
+  <br><span style="color:#c6c6c6;font-size:11px">Made with IBM Bob</span>
+</footer>
+
+<script>
+function copyCode(btn){
+  const code = btn.closest('.code-block').querySelector('.code-body').textContent;
+  navigator.clipboard.writeText(code.trim()).then(() => {
+    btn.textContent = 'Copied!'; btn.classList.add('copied');
+    setTimeout(() => { btn.textContent = 'Copy'; btn.classList.remove('copied'); }, 2000);
+  });
+}
+const links = document.querySelectorAll('.sidebar__link');
+const steps = document.querySelectorAll('.step[id]');
+window.addEventListener('scroll', () => {
+  const y = window.scrollY + 70;
+  let cur = steps[0];
+  steps.forEach(s => { if(s.offsetTop <= y) cur = s; });
+  links.forEach(l => { l.classList.remove('active'); if(l.getAttribute('href') === '#' + (cur && cur.id)) l.classList.add('active'); });
+});
+</script>
+</body>
+</html>

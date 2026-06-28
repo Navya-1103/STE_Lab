@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>Tutorial 06 — Create a new context window | IBM Bob IDE Lab</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&family=IBM+Plex+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+<link rel="stylesheet" href="../assets/tutorial.css"/>
+</head>
+<body>
+<header class="topbar">
+  <div class="topbar__brand">
+    <button class="menu-toggle" onclick="document.getElementById('sidebar').classList.toggle('open')" aria-label="Menu">&#9776;</button>
+    <div class="logo-dot"></div>
+    <div>
+      <div class="brand-kicker">IBM BOB</div>
+      <div class="brand-title">IDE Tutorial Lab Guide</div>
+    </div>
+  </div>
+  <div class="topbar__meta">
+    <a href="https://bob.ibm.com/docs/ide/tutorials/context-window" class="topbar__link" target="_blank" rel="noopener">Official Docs ↗</a>
+  </div>
+</header>
+
+<div class="layout">
+  <nav class="sidebar" id="sidebar">
+    <a href="../index.html" class="sidebar__back">← Back to Lab Home</a>
+    <div class="sidebar__title">On This Page</div>
+    <div class="sidebar__nav">
+      <a href="#overview" class="sidebar__link active"><span class="sidebar__num">—</span> Why Context Matters</a>
+      <a href="#terminology" class="sidebar__link"><span class="sidebar__num">—</span> Key Terms</a>
+      <a href="#prereqs" class="sidebar__link"><span class="sidebar__num">—</span> Prerequisites</a>
+      <a href="#setup" class="sidebar__link"><span class="sidebar__num">01</span> Set up the lab</a>
+      <a href="#read-breakdown" class="sidebar__link"><span class="sidebar__num">02</span> Read the breakdown</a>
+      <a href="#grow-messages" class="sidebar__link"><span class="sidebar__num">03</span> Grow messages</a>
+      <a href="#new-context" class="sidebar__link"><span class="sidebar__num">04</span> Create new context</a>
+      <a href="#next-steps" class="sidebar__link"><span class="sidebar__num">—</span> Next Steps</a>
+    </div>
+  </nav>
+
+  <main class="content">
+    <div class="page-header">
+      <div class="page-kicker">Tutorial 06 · Context Management</div>
+      <h1>Create a new context window</h1>
+      <p class="page-lead">Manage Bob's context window to preserve memory, control cost, and maintain output quality during complex or long-running conversations.</p>
+    </div>
+
+    <div class="step" id="overview">
+      <div class="step-num">Overview</div>
+      <h2>Why context management matters</h2>
+      <p>Every task (conversation) in the chat panel has a <strong>context window</strong>. The context window is the token limit for what Bob can hold in memory for the current session. Context includes system instructions, tool schemas, your rules and skills, and the full transcript.</p>
+
+      <h3>Token cost</h3>
+      <p>Tokens are the unit of consumption for Bob, measured in Bob coins. Longer conversations and larger file reads consume more tokens. Keeping conversations focused reduces cost. Every prompt re-sends the full active context — a one-line question still carries Tool definitions, Rules, and whatever else Bob loads by default.</p>
+
+      <h3>Summarization is lossy</h3>
+      <p>When Bob reaches its token limit, Bob condenses older content to keep working — which drops detail. You can lose edge cases, intermediate reasoning, and constraints you stated many prompts ago. If you still need content details, start a new task before Bob summarizes it away.</p>
+
+      <h3>Quality degrades before the limit</h3>
+      <p>Bob currently uses a 270.0k token window. Quality often drops <em>before</em> you reach it. As Messages grows, replies get less reliable.</p>
+    </div>
+
+    <div class="step" id="terminology">
+      <div class="step-num">Key Terms</div>
+      <h2>Terminology</h2>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr><th>Term</th><th>Definition</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>Task</td><td>One conversation thread with its own context window. Start a new context window with <strong>+ (New task)</strong>.</td></tr>
+            <tr><td>Context window breakdown</td><td>Click the token usage indicator in the top right of the chat panel to see where tokens go.</td></tr>
+            <tr><td>System prompt</td><td>Bob's core instructions for this session.</td></tr>
+            <tr><td>Tool definitions</td><td>Schemas for Bob's built-in tools and connected MCP tools.</td></tr>
+            <tr><td>Rules</td><td>Custom instructions from your project and mode (e.g., AGENTS.md).</td></tr>
+            <tr><td>Skills</td><td>Instructions from any skills Bob loaded during the task.</td></tr>
+            <tr><td>Messages</td><td>Your prompts, Bob's replies, and tool activity in the task (counted as tokens).</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="step" id="prereqs">
+      <div class="step-num">Prerequisites</div>
+      <h2>What you need</h2>
+      <ul>
+        <li><strong>IBM Bob IDE</strong> v2.x or later.</li>
+        <li><strong>Git</strong> to clone the example repository.</li>
+      </ul>
+      <p>How this tutorial is organized:</p>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr><th>Step</th><th>Section</th><th>What you do</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>1</td><td>Set up the lab</td><td>Open Galaxium Travels and the chat panel</td></tr>
+            <tr><td>2</td><td>Read the context window breakdown</td><td>Send a minimal prompt, then inspect a fresh breakdown (~8.5k)</td></tr>
+            <tr><td>3</td><td>Grow messages with a prompt</td><td>List files, then verify Messages jumps to ~4.2k (12.1k total)</td></tr>
+            <tr><td>4</td><td>Create a new context window</td><td>Click + (New task), then verify the indicator resets</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="step" id="setup">
+      <div class="step-num">Step 01</div>
+      <h2>Set up the lab</h2>
+      <ol>
+        <li>Clone the Galaxium Travels repository:</li>
+      </ol>
+      <div class="code-block">
+        <div class="code-block__header">
+          <span class="code-block__lang">bash</span>
+          <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+        </div>
+        <div class="code-body">git clone -b bob-learning-path-branch https://github.com/IBM/galaxium-travels</div>
+      </div>
+      <ol start="2">
+        <li>Click <strong>File</strong> then <strong>Open Folder</strong>. Navigate to the <code>galaxium-travels</code> directory you cloned and open it.</li>
+        <li>Open the Bob chat interface by clicking the <strong>Bob icon</strong> beside the navigation bar, or use the shortcut <code>Option + Command + B</code> (macOS) or <code>Ctrl + Alt + B</code> (Windows).</li>
+        <li>In the chat input field, run <code>/init</code>. Bob scans the repository and creates an AGENTS.md file with project rules. Click <strong>Approve todo tools for task</strong> if prompted. Wait for Bob to report that it finished.</li>
+      </ol>
+      <div class="callout callout--info">
+        <div class="callout__label">Why run /init first?</div>
+        <p>This AGENTS.md is what later appears as the <strong>Rules</strong> line in the context window breakdown, so the repository needs it before you measure a baseline.</p>
+      </div>
+    </div>
+
+    <div class="step" id="read-breakdown">
+      <div class="step-num">Step 02</div>
+      <h2>Read the context window breakdown</h2>
+      <ol>
+        <li>Click <strong>+ (New task)</strong> at the top of the chat panel to start a fresh task.</li>
+        <li>Send a minimal prompt to use a small amount of tokens:</li>
+      </ol>
+      <div class="code-block">
+        <div class="code-block__header">
+          <span class="code-block__lang">bob prompt</span>
+          <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+        </div>
+        <div class="code-body">Quickly say hi back.</div>
+      </div>
+      <ol start="3">
+        <li>Wait for Bob's reply.</li>
+        <li>Click the <strong>token usage indicator</strong> in the top right of the chat panel to see the usage breakdown.</li>
+      </ol>
+      <p>After this exchange on Galaxium Travels, your numbers will vary, but you will see numbers close to:</p>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr><th>Category</th><th>Tokens</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>Total used</td><td>8.5k (~3% full)</td></tr>
+            <tr><td>System prompt</td><td>1.5k</td></tr>
+            <tr><td>Tool definitions</td><td>5.1k</td></tr>
+            <tr><td>Rules</td><td>830</td></tr>
+            <tr><td>Skills</td><td>454</td></tr>
+            <tr><td>Messages</td><td>590</td></tr>
+            <tr><td>Reserved for model response</td><td>20.0k</td></tr>
+            <tr><td>Available space</td><td>241.5k</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="callout callout--info">
+        <div class="callout__label">Note</div>
+        <p><strong>Tool definitions</strong> is usually the largest fixed category. MCP servers and built-in tool schemas load whether you call them or not. On Galaxium, fixed categories total roughly 8k before meaningful work — you pay that on every turn, whether you typed it or not.</p>
+      </div>
+    </div>
+
+    <div class="step" id="grow-messages">
+      <div class="step-num">Step 03</div>
+      <h2>Grow messages with a prompt</h2>
+      <p>Stay in the same task. Send a prompt that fills the transcript:</p>
+      <div class="code-block">
+        <div class="code-block__header">
+          <span class="code-block__lang">bob prompt</span>
+          <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+        </div>
+        <div class="code-body">List all of the files in this directory.</div>
+      </div>
+      <p>Approve read actions if prompted. Bob lists files in the repository. Now open the breakdown again and compare:</p>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr><th>Category</th><th>Fresh task</th><th>After list-files</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>System prompt</td><td>1.5k</td><td>1.5k</td></tr>
+            <tr><td>Tool definitions</td><td>5.1k</td><td>5.1k</td></tr>
+            <tr><td>Rules</td><td>830</td><td>830</td></tr>
+            <tr><td>Skills</td><td>454</td><td>454</td></tr>
+            <tr><td>Messages</td><td>590</td><td>~4.2k</td></tr>
+            <tr><td><strong>Total used</strong></td><td><strong>8.5k (~3%)</strong></td><td><strong>12.1k (~4%)</strong></td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p><strong>Messages</strong> should now read about 4.2k. The key insight: Messages grew while the fixed categories did not. List output and tool activity sit in the transcript. Over time, <strong>Messages is usually what grows fastest</strong>.</p>
+    </div>
+
+    <div class="step" id="new-context">
+      <div class="step-num">Step 04</div>
+      <h2>Create a new context window</h2>
+      <p>Start a new task in the same project. The old task (conversation) stays in history.</p>
+      <ol>
+        <li>Click <strong>+ (New task)</strong> at the top of the chat panel.</li>
+        <li>The indicator resets. Messages drops back to a small number.</li>
+        <li>System prompt, Tool definitions, Rules, and Skills reload to roughly the baseline.</li>
+      </ol>
+      <div class="callout callout--info">
+        <div class="callout__label">Note</div>
+        <p>The task you left stays in the task list, and you can switch back at any time. It keeps its own transcript and token count. Bob does not use it while you work in the new task.</p>
+      </div>
+
+      <h3>When to start a new task</h3>
+      <ul class="checklist">
+        <li>You switch topics or work goals.</li>
+        <li>Messages is large enough to hurt quality or cost. On Galaxium, 19.4k in Messages is a reasonable signal to reset.</li>
+        <li>You finished planning and want a clean task for implementation.</li>
+      </ul>
+
+      <h3>Reflection</h3>
+      <p>Open the breakdown on the new task. Which categories returned to baseline? Which would have kept growing if you had stayed in the old task?</p>
+    </div>
+
+    <div class="step" id="next-steps">
+      <div class="step-num">Summary</div>
+      <h2>Next steps</h2>
+      <p>In this tutorial, you learned how to manage the context window effectively. You read the breakdown, measured the amount of fixed token overhead, watched Messages increase after one list-files prompt, and reset with <strong>+ (New task)</strong>.</p>
+      <p>For further reading:</p>
+      <ul class="checklist">
+        <li><a href="https://bob.ibm.com/docs/ide/core-concepts/context-window-management" target="_blank" rel="noopener">Context window management</a> — Condensation threshold, MCP impact, and best practices.</li>
+        <li><a href="https://bob.ibm.com/docs/ide/features/custom-rules" target="_blank" rel="noopener">Custom rules</a> — What fills the Rules category.</li>
+        <li><a href="https://bob.ibm.com/docs/ide/features/skills" target="_blank" rel="noopener">Skills</a> — What fills the Skills category.</li>
+      </ul>
+      <div class="callout callout--success">
+        <div class="callout__label">Congratulations!</div>
+        <p>You have completed all 6 tutorials in the IBM Bob IDE Tutorial Series. You now know how to set up a project with <code>/init</code>, manage Git workflows, use literate coding, standardize Bob's behavior with rules, create custom modes, and manage the context window efficiently.</p>
+      </div>
+    </div>
+
+    <div class="nav-footer">
+      <a href="05-add-custom-mode.html" class="nav-btn">
+        <span class="nav-btn__dir">← Previous</span>
+        <span class="nav-btn__title">Add a custom mode</span>
+      </a>
+      <a href="../index.html" class="nav-btn nav-btn--next">
+        <span class="nav-btn__dir">↩ Back to</span>
+        <span class="nav-btn__title">Lab Home</span>
+      </a>
+    </div>
+  </main>
+</div>
+
+<footer>
+  IBM Bob IDE Tutorial Lab Guide &nbsp;·&nbsp; Tutorial 06 of 06
+  <br><span style="color:#c6c6c6;font-size:11px">Made with IBM Bob</span>
+</footer>
+
+<script>
+function copyCode(btn){
+  const code = btn.closest('.code-block').querySelector('.code-body').textContent;
+  navigator.clipboard.writeText(code.trim()).then(() => {
+    btn.textContent = 'Copied!'; btn.classList.add('copied');
+    setTimeout(() => { btn.textContent = 'Copy'; btn.classList.remove('copied'); }, 2000);
+  });
+}
+const links = document.querySelectorAll('.sidebar__link');
+const steps = document.querySelectorAll('.step[id]');
+window.addEventListener('scroll', () => {
+  const y = window.scrollY + 70;
+  let cur = steps[0];
+  steps.forEach(s => { if(s.offsetTop <= y) cur = s; });
+  links.forEach(l => { l.classList.remove('active'); if(l.getAttribute('href') === '#' + (cur && cur.id)) l.classList.add('active'); });
+});
+</script>
+</body>
+</html>
