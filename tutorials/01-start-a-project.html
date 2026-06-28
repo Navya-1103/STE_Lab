@@ -32,8 +32,6 @@
       <a href="#prereqs" class="sidebar__link active"><span class="sidebar__num">—</span> Prerequisites</a>
       <a href="#run-init" class="sidebar__link"><span class="sidebar__num">01</span> Run /init</a>
       <a href="#explore-agents" class="sidebar__link"><span class="sidebar__num">02</span> Explore AGENTS.md</a>
-      <a href="#mode-specific" class="sidebar__link"><span class="sidebar__num">03</span> Mode-specific Files</a>
-      <a href="#maintain" class="sidebar__link"><span class="sidebar__num">04</span> Maintain AGENTS.md</a>
       <a href="#next-steps" class="sidebar__link"><span class="sidebar__num">—</span> Next Steps</a>
     </div>
   </nav>
@@ -110,41 +108,6 @@
       <p>Bob automatically applies the AGENTS.md to new conversations and learns the project context.</p>
     </div>
 
-    <div class="step" id="mode-specific">
-      <div class="step-num">Step 03</div>
-      <h2>Mode-specific AGENTS.md files</h2>
-      <p>In addition to the main AGENTS.md in the Galaxium Travels root directory, <code>/init</code> generates mode-specific context files in the <code>.bob</code> folder for each built-in mode. Each mode-specific AGENTS.md extends the main AGENTS.md with context relevant to that mode's purpose.</p>
-
-      <div class="table-wrap">
-        <table>
-          <thead>
-            <tr><th>File</th><th>Mode</th></tr>
-          </thead>
-          <tbody>
-            <tr><td><code>.bob/rules-code/AGENTS-code.md</code></td><td>Agent mode</td></tr>
-            <tr><td><code>.bob/rules-plan/AGENTS-plan.md</code></td><td>Plan mode</td></tr>
-            <tr><td><code>.bob/rules-ask/AGENTS-ask.md</code></td><td>Ask mode</td></tr>
-          </tbody>
-        </table>
-      </div>
-      <div class="callout callout--info">
-        <div class="callout__label">Note</div>
-        <p>The Plan mode context emphasizes architectural conventions, while the Agent mode context highlights file structure and naming patterns.</p>
-      </div>
-    </div>
-
-    <div class="step" id="maintain">
-      <div class="step-num">Step 04</div>
-      <h2>Maintain the AGENTS.md files</h2>
-      <p>Re-run <code>/init</code> after you make the following project adjustments:</p>
-      <ul class="checklist">
-        <li>Adding new modules or services</li>
-        <li>Changing the directory structure</li>
-        <li>Adopting new technologies or frameworks</li>
-        <li>Onboarding new team members who will use Bob</li>
-      </ul>
-      <p>You can also <strong>manually edit</strong> the AGENTS.md to add context that Bob's automated scan might not capture, such as business rules, deployment conventions, or team-specific practices.</p>
-    </div>
 
     <div class="step" id="next-steps">
       <div class="step-num">Summary</div>
