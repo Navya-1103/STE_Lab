@@ -62,7 +62,7 @@
       <p>When you create a plan, Bob generates a set of Markdown files that describe the scope, architecture decisions, and ordered implementation steps. Because the plan is <em>separate</em> from the implementation, you can read it, question it, and refine it before Bob writes any code.</p>
       <div class="callout callout--info">
         <div class="callout__label">The scenario</div>
-        <p>In this tutorial, you use Plan mode to create a structured implementation plan for adding <strong>seat classes</strong> to the Galaxium Travels demo application — Economy, Business, and Galaxium class — across the front-end, back-end, and database layers. You then approve the plan and let Bob implement the feature.</p>
+        <p>In this tutorial, you use Plan mode to create a structured implementation plan for adding a <strong>price range filter</strong> to the Galaxium Travels flights page — a min/max price slider that narrows the flight list in real time. You then approve the plan and let Bob implement the feature.</p>
       </div>
     </div>
 
@@ -116,7 +116,7 @@
         </div>
         <div class="principle-card">
           <div class="principle-card__q">What is "done"?</div>
-          <p>A concrete acceptance criterion, e.g. "a user can select Economy, Business, or Galaxium class during booking."</p>
+          <p>A concrete acceptance criterion, e.g. "a user can drag a min/max price slider and the flight list updates immediately to show only matching flights."</p>
         </div>
       </div>
     </div>
@@ -128,23 +128,25 @@
       <p>Open the agentic chat sidebar. Select <strong>Plan</strong> from the mode selector in the chat interface.</p>
 
       <h3>Create the plan</h3>
-      <p>Run the following prompt. Notice how it applies the four scoping principles: it names the layers to change, sets a file count limit, excludes the admin dashboard, and states an acceptance criterion.</p>
+      <p>Run the following prompt. Notice how it applies the four scoping principles: it names the exact layer to change (frontend only), sets a file count limit, explicitly excludes backend and database work, and states a clear acceptance criterion.</p>
       <div class="code-block">
         <div class="code-block__header"><span class="code-block__lang">bob prompt — Plan mode</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
-        <div class="code-body">I want to add seat classes to Galaxium Travels. Passengers should be able to choose Economy, Business, or Galaxium class when booking a flight.
+        <div class="code-body">I want to add a price range filter to the Galaxium Travels flights page. Users should be able to set a minimum and maximum price to narrow the list of displayed flights in real time.
 
 Scope:
-- Update the booking UI to show a seat class selector
-- Update the back-end booking API to accept and store the selected class
-- Update the database schema to add a seat_class column to the bookings table
-- Do not add admin dashboard changes — that is out of scope
+- Add a min/max price range slider (or two numeric inputs) to the search/filter bar on the Flights page
+- Filter the displayed flight list in real time as the user adjusts the price range
+- Show the active price range values next to the control so users can see what range is applied
+- Do not add any back-end or database changes — all filtering happens on the already-loaded flight data in the browser
+- Do not change the existing text search behaviour
 
 Constraints:
 - Create a folder called `plans` in the galaxium-travels folder
-- Do not create more than three plan files
-- Keep the database change backward compatible
+- Do not create more than two plan files
+- Only modify files inside booking_system_frontend/src — do not touch any other directory
+- Match the existing glass-card and cosmic visual style of the Flights page
 
-Done when: A user can select a seat class during booking and the selected class is saved and displayed in their booking confirmation.</div>
+Done when: A user can set a min and max price on the Flights page and the flight list immediately updates to show only flights whose price falls within the selected range.</div>
       </div>
       <p>Bob may ask clarifying questions about your intent. Answer them, or tell Bob to select the best options. Click <strong>Approve skill tools for task</strong> and <strong>Approve subagent tools for task</strong> when prompted.</p>
       <p>When Bob finishes, it requests approval to write the plan files. Click <strong>Approve edit tools for task</strong>. Bob places the plan files in the <code>plans/</code> folder as Markdown files.</p>
@@ -166,13 +168,13 @@ Done when: A user can select a seat class during booking and the selected class 
       <div class="step-num">Step 05</div>
       <h2>Iterate on the plan</h2>
       <p>If the plan does not match your intent, ask Bob to revise it <em>in the same Plan mode conversation</em>. You do not need to start over.</p>
-      <p>For example, if the plan Bob generated was not specific about the color or badge for each seat class:</p>
+      <p>For example, if the plan Bob generated left the default price range unspecified, or did not describe what happens when no flights match the filter:</p>
       <div class="code-block">
         <div class="code-block__header"><span class="code-block__lang">bob prompt — Plan mode (same conversation)</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
-        <div class="code-body">Please update the plan to specify the following colors for each class:
-- Economy: green
-- Business: gold
-- Galaxium: cosmic-gradient</div>
+        <div class="code-body">Please update the plan with the following details:
+- The default min price should be 0 and the default max price should be the highest price in the loaded flight list
+- When no flights match the active price range, show the same "No flights found" empty state that already exists for the text search
+- The active price range values should be displayed in Galaxium Credits (e.g. "500,000 – 2,000,000 credits")</div>
       </div>
       <p>Review the plan again after revisions. Repeat until you are satisfied that the plan matches your intent exactly.</p>
       <div class="callout callout--warning">
@@ -204,47 +206,52 @@ Done when: A user can select a seat class during booking and the selected class 
       <p>Bob prompts you to <strong>Approve todo tools for task</strong> and <strong>Approve edit tools for task</strong>. Approve both requests.</p>
       <div class="callout callout--success">
         <div class="callout__label">Result</div>
-        <p>You have added seat class support across the booking UI, back-end API, and database — with Economy, Business, and Galaxium class options reflected throughout the system, using the colors specified in your revised plan.</p>
+        <p>You have added a real-time price range filter to the Flights page — purely in the frontend, exactly as scoped. The flight list narrows immediately as the user adjusts the range, showing prices in Galaxium Credits with a clear empty state when no flights match.</p>
       </div>
     </div>
 
     <div class="step" id="run">
       <div class="step-num">Step 07</div>
       <h2>Run the application with the new feature</h2>
-      <p>After Bob finishes implementing the seat class feature, start the application to verify the changes work end to end.</p>
+      <p>After Bob finishes implementing the price filter, start the frontend to verify the changes work end to end. Because this feature is frontend-only, no migration or backend restart is needed.</p>
 
-      <h3>Install dependencies</h3>
-      <p>If this is your first run after cloning, install the project dependencies first.</p>
+      <h3>Install frontend dependencies</h3>
+      <p>If this is your first run after cloning, install the frontend dependencies first.</p>
       <div class="code-block">
         <div class="code-block__header"><span class="code-block__lang">bash</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
-        <div class="code-body">cd galaxium-travels
+        <div class="code-body">cd galaxium-travels/booking_system_frontend
 npm install</div>
       </div>
 
-      <h3>Apply the database migration</h3>
-      <p>The plan added a <code>seat_class</code> column to the bookings table. Run the migration before starting the server so the schema is up to date.</p>
+      <h3>Start the backend</h3>
+      <p>The frontend needs the flight data API running. Open a terminal and start the Python backend:</p>
       <div class="code-block">
         <div class="code-block__header"><span class="code-block__lang">bash</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
-        <div class="code-body">npm run migrate</div>
+        <div class="code-body">cd galaxium-travels/booking_system_backend
+python server.py</div>
       </div>
 
-      <h3>Start the development server</h3>
+      <h3>Start the frontend dev server</h3>
+      <p>In a second terminal, start the Vite development server:</p>
       <div class="code-block">
         <div class="code-block__header"><span class="code-block__lang">bash</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
-        <div class="code-body">npm run dev</div>
+        <div class="code-body">cd galaxium-travels/booking_system_frontend
+npm run dev</div>
       </div>
-      <p>Open <strong>http://localhost:3000</strong> in your browser.</p>
+      <p>Open <strong>http://localhost:5173</strong> in your browser (Vite's default port).</p>
 
-      <h3>Verify the seat class feature</h3>
+      <h3>Verify the price filter feature</h3>
       <ul class="checklist">
-        <li>Navigate to the <strong>Book a Flight</strong> page and confirm the seat class selector (Economy, Business, Galaxium) is visible.</li>
-        <li>Complete a booking and confirm the selected class is shown on the booking confirmation screen.</li>
-        <li>Check that the class badge colours match the plan — green for Economy, gold for Business, and cosmic-gradient for Galaxium.</li>
+        <li>Navigate to the <strong>Flights</strong> page and confirm the price range filter control is visible in the search bar alongside the existing text search.</li>
+        <li>Adjust the minimum price upward — confirm that cheap flights disappear from the list immediately.</li>
+        <li>Set a very low maximum price so no flights qualify — confirm the "No flights found" empty state is displayed.</li>
+        <li>Reset the range to its defaults — confirm all flights reappear.</li>
+        <li>Confirm the displayed price range is shown in Galaxium Credits format (e.g. <code>500,000 – 2,000,000 credits</code>).</li>
       </ul>
 
       <div class="callout callout--success">
         <div class="callout__label">Done</div>
-        <p>The seat class feature is live. Users can now choose Economy, Business, or Galaxium class when booking a flight, and the selection is persisted and displayed throughout the booking flow.</p>
+        <p>The price range filter is live. Users can narrow the Galaxium Travels flight list by min and max price entirely in the browser — no backend changes, no database migration, exactly as scoped in the plan.</p>
       </div>
     </div>
 
