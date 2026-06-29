@@ -128,7 +128,7 @@
       <p>Open the agentic chat sidebar. Select <strong>Plan</strong> from the mode selector in the chat interface.</p>
 
       <h3>Create the plan</h3>
-      <p>Run the following prompt. Notice how it applies the four scoping principles: it names the exact layer to change (frontend only), sets a file count limit, explicitly excludes backend and database work, and states a clear acceptance criterion.</p>
+      <p>Run the following prompt. Notice how it applies the four scoping principles: it names the exact layer to change (frontend only), sets a file count limit, explicitly excludes backend and database work, and states a clear acceptance criterion. The final line is critical — it tells Bob to <strong>stop after writing the plan files</strong> and not touch any source code.</p>
       <div class="code-block">
         <div class="code-block__header"><span class="code-block__lang">bob prompt — Plan mode</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
         <div class="code-body">I want to add a price range filter to the Galaxium Travels flights page. Users should be able to set a minimum and maximum price to narrow the list of displayed flights in real time.
@@ -146,10 +146,16 @@ Constraints:
 - Only modify files inside booking_system_frontend/src — do not touch any other directory
 - Match the existing glass-card and cosmic visual style of the Flights page
 
-Done when: A user can set a min and max price on the Flights page and the flight list immediately updates to show only flights whose price falls within the selected range.</div>
+Done when: A user can set a min and max price on the Flights page and the flight list immediately updates to show only flights whose price falls within the selected range.
+
+Important: Write the plan Markdown files only. Do not write, modify, or create any application source code. Stop after the plan files are saved and wait for further instructions.</div>
       </div>
       <p>Bob may ask clarifying questions about your intent. Answer them, or tell Bob to select the best options. Click <strong>Approve skill tools for task</strong> and <strong>Approve subagent tools for task</strong> when prompted.</p>
-      <p>When Bob finishes, it requests approval to write the plan files. Click <strong>Approve edit tools for task</strong>. Bob places the plan files in the <code>plans/</code> folder as Markdown files.</p>
+      <p>When Bob finishes, it requests approval to write the plan files. Click <strong>Approve edit tools for task</strong>. Bob places the plan files in the <code>plans/</code> folder as Markdown files — no application source code is written at this stage.</p>
+      <div class="callout callout--info">
+        <div class="callout__label">Plan mode only writes plans</div>
+        <p>At the end of this step you will have one or two <code>.md</code> files inside <code>plans/</code>. No TypeScript, no CSS, no component files — those come later, only after you have reviewed and approved the plan in Steps 04 and 05.</p>
+      </div>
     </div>
 
     <div class="step" id="review-plan">
@@ -179,13 +185,18 @@ Done when: A user can set a min and max price on the Flights page and the flight
       <p>Review the plan again after revisions. Repeat until you are satisfied that the plan matches your intent exactly.</p>
       <div class="callout callout--warning">
         <div class="callout__label">Do not skip this step</div>
-        <p>The plan is your opportunity to catch issues before Bob writes any code. A 5-minute review now can save 30 minutes of undoing changes later.</p>
+        <p>The plan is your opportunity to catch issues before Bob writes any code. A 5-minute review now can save 30 minutes of undoing changes later. Implementation does not start until you explicitly run the <code>Build the features in the plans folder @plans/</code> command in Step 06.</p>
       </div>
     </div>
 
     <div class="step" id="implement">
       <div class="step-num">Step 06</div>
-      <h2>Implement the new features</h2>
+      <h2>Implement the feature</h2>
+      <div class="callout callout--warning">
+        <div class="callout__label">Only run this step after Steps 04 and 05 are complete</div>
+        <p>Do not run the implementation prompt until you have reviewed the plan (Step 04) and iterated on it until it matches your intent (Step 05). The command below is the trigger that starts code generation — nothing in Steps 03–05 writes any application source code.</p>
+      </div>
+
       <h3>Start a new conversation</h3>
       <p>Click the <strong>+</strong> at the top of the chat interface to start a new conversation and clear the context window. Starting a new conversation:</p>
       <ul class="checklist">
@@ -198,7 +209,7 @@ Done when: A user can set a min and max price on the Flights page and the flight
       <p>Select <strong>Agent</strong> from the mode selector to switch to Agent mode.</p>
 
       <h3>Build the feature</h3>
-      <p>Submit this prompt to implement the features. The <code>@plans/</code> reference includes all plans in the folder, so you do not need to name the files individually.</p>
+      <p>Submit this prompt to implement the feature. The <code>@plans/</code> reference passes all plan files as context, so Bob builds exactly what is described in the approved plan — nothing more.</p>
       <div class="code-block">
         <div class="code-block__header"><span class="code-block__lang">bob prompt — Agent mode</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
         <div class="code-body">Build the features in the plans folder @plans/</div>
@@ -213,32 +224,28 @@ Done when: A user can set a min and max price on the Flights page and the flight
     <div class="step" id="run">
       <div class="step-num">Step 07</div>
       <h2>Run the application with the new feature</h2>
-      <p>After Bob finishes implementing the price filter, start the frontend to verify the changes work end to end. Because this feature is frontend-only, no migration or backend restart is needed.</p>
+      <p>After Bob finishes implementing the price filter, use the start script to launch both the backend and frontend together. The script handles dependency installation automatically.</p>
 
-      <h3>Install frontend dependencies</h3>
-      <p>If this is your first run after cloning, install the frontend dependencies first.</p>
+      <h3>macOS — run start.sh</h3>
+      <p>Open a terminal in the <code>galaxium-travels</code> root directory and run:</p>
       <div class="code-block">
-        <div class="code-block__header"><span class="code-block__lang">bash</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
-        <div class="code-body">cd galaxium-travels/booking_system_frontend
-npm install</div>
+        <div class="code-block__header"><span class="code-block__lang">bash — macOS</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+        <div class="code-body">chmod +x start.sh && ./start.sh</div>
       </div>
 
-      <h3>Start the backend</h3>
-      <p>The frontend needs the flight data API running. Open a terminal and start the Python backend:</p>
+      <h3>Windows — run start.bat</h3>
+      <p>Open a Command Prompt in the <code>galaxium-travels</code> root directory and run:</p>
       <div class="code-block">
-        <div class="code-block__header"><span class="code-block__lang">bash</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
-        <div class="code-body">cd galaxium-travels/booking_system_backend
-python server.py</div>
+        <div class="code-block__header"><span class="code-block__lang">cmd — Windows</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+        <div class="code-body">start.bat</div>
       </div>
 
-      <h3>Start the frontend dev server</h3>
-      <p>In a second terminal, start the Vite development server:</p>
-      <div class="code-block">
-        <div class="code-block__header"><span class="code-block__lang">bash</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
-        <div class="code-body">cd galaxium-travels/booking_system_frontend
-npm run dev</div>
+      <p>Both scripts start the Python backend on <strong>http://localhost:8080</strong> and the Vite frontend on <strong>http://localhost:5173</strong>. Open <strong>http://localhost:5173</strong> in your browser once both servers are running. Press <code>Ctrl+C</code> to stop all servers.</p>
+
+      <div class="callout callout--info">
+        <div class="callout__label">What the script does</div>
+        <p>The start script checks for Python 3 and Node.js, creates and activates a Python virtual environment if one does not exist, installs backend and frontend dependencies on first run, then starts both servers in the background.</p>
       </div>
-      <p>Open <strong>http://localhost:5173</strong> in your browser (Vite's default port).</p>
 
       <h3>Verify the price filter feature</h3>
       <ul class="checklist">
